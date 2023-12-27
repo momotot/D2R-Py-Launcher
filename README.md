@@ -34,15 +34,15 @@ Using keyboard inputs and mouse clicks to execute actions without read/write ope
   - [psutil](https://pypi.org/project/psutil/): `pip install psutil`
   - [pywin32](https://pypi.org/project/pywin32/): `pip install pywin32`
 - **Handle 64:**
-- - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): 
+- - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`
 
 
 ## Installation-Usage
 
 1. **Clone Repository:**
    ```bash
-   git clone https://github.com/your-username/d2r-launcher.git
-   cd d2r-launcher
+   git clone https://github.com/momotot/D2R-Py-Launcher.git
+   cd D2R-Py-Launcher
 
 3. **Install dependencies:**
    ```bash
