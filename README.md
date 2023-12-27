@@ -2,13 +2,12 @@
 
 ## Table of Contents
 
-- [Description](#description)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
+- [Description](#Description)
+- [Features](#Features)
+- [Requirements](#Requirements)
+- [Installation / Usage](#Installation)
 - [Troubleshooting](#troubleshooting)
-- [License](#license)
+- [License](#License)
 - [Acknowledgements](#Acknowledgements)
 
 
