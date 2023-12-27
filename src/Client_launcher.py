@@ -30,12 +30,12 @@ class Client:
     # Reads the config.ini
     def read_config(self):
         config = configparser.ConfigParser()
-        config.read("config.ini")
+        config.read("src/config.ini")
         return config
     
     # Parses the config.ini and launches the game with the config parameters
     def parse_config_and_launch(self):
-        # check to sync active pids with the list
+        # check to sync active pids with the list 
         active_pids = self.get_pids()
         potentially_remove = []
         for name, pid in self.process_info.items():
@@ -50,7 +50,7 @@ class Client:
         clients_launched = 0
         main_char_launched = any("[MAIN]" in item for item in self.process_info.keys())
         for name in config.sections():
-            name_string = f"[MAIN] - {name}"
+            name_string = f"[MAIN] - {name}"         
             if name in self.process_info.keys() or name_string in self.process_info.keys():
                 continue   
 
