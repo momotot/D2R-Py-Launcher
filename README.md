@@ -1,5 +1,7 @@
 # D2R-Py-Launcher 1.0.0
 
+![D2R-Py-Launcher](https://i.imgur.com/Hj3DrG3.png)
+
 ## Table of Contents
 
 - [Description](#Description)
