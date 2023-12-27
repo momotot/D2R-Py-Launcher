@@ -49,7 +49,7 @@ Using keyboard inputs and mouse clicks to execute actions without read/write ope
    pip install pyautogui PyGetWindow psutil pywin32
 4. **Handle64**
    ```bash
-   Make sure you have handle64.exe and d2r_handle.txt in your src folder to be able to launch multiple D2R
+   Make sure to download handle64.exe and place it in the src folder
 
 5. **Config setup**
    ```bash
