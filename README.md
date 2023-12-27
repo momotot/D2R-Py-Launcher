@@ -49,7 +49,7 @@ Using keyboard inputs and mouse clicks to execute actions without read/write ope
    pip install pyautogui PyGetWindow psutil pywin32
 4. **Handle64**
    ```bash
-   Make sure you have handle64.exe and d2r_handle.txt in your src folder to be able to launch multiple D2R
+   Make sure to download handle64.exe and place it in the src folder
 
 5. **Config setup**
    ```bash
@@ -60,11 +60,20 @@ Using keyboard inputs and mouse clicks to execute actions without read/write ope
    username=momotot@D2R-Py-Launcher.com
    password=yourpassword
    region=eu.actual.battle.net (eu / na /kr)
+   
 7. **Run the app**
   ```bash
      Run the Start.bat file
-
 ```
+8. **Joining games**
+   ```bash
+   In order to make the joining of next game to work there are some prerequisite:
+   - All "leechers/joiners" must have entered lobby and joined a game from there
+   - Joining is through friend list so the main char must be the only added account to the leechers friend list
+   - The main character must be online (green status) on battle.net
+   - You can be in either d2r or legacy graphic mode, both will work
+   - Currently it will only work when you have re-sized with the re-size button
+
 ## Troubleshooting
 
 - Invalid D2R path: `ensure that you have selected the correct D2R.exe`
