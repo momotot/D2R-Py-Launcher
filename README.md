@@ -5,7 +5,7 @@
 - [Description](#Description)
 - [Features](#Features)
 - [Requirements](#Requirements)
-- [Installation / Usage](#Installation)
+- [Installation / Usage](#Installation-Usage)
 - [Troubleshooting](#troubleshooting)
 - [License](#License)
 - [Acknowledgements](#Acknowledgements)
@@ -37,7 +37,7 @@ Using keyboard inputs and mouse clicks to execute actions without read/write ope
 - - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): 
 
 
-## Installation / Usage
+## Installation-Usage
 
 1. **Clone Repository:**
    ```bash
