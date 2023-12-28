@@ -57,9 +57,16 @@ class Client:
             if clients_launched == int(self.clients):
                 break
 
+            if "user" in name:
+                break
+
             username = config.get(name, "username")
             password = config.get(name, "password")
             region = config.get(name, "region")
+
+            if username == "" or password == "" or region == "":
+                break
+
             command = f"{self.diablo_path} -username {username} -password { password} -region {region}"
             pid = ""
             try:
