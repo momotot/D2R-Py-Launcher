@@ -1,5 +1,5 @@
 *.txt
-config.ini
+src/config.ini
 d2r_handles.txt
 *.exe
 
