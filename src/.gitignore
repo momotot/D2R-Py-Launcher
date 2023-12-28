@@ -1,0 +1,6 @@
+*.txt
+config.ini
+d2r_handles.txt
+*.exe
+
+__pycache__/
