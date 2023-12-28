@@ -173,7 +173,7 @@ class Client:
                 self.console.log_message("No window(s) opened", 2)
                 return
             self.console.log_message("Attempting next game join", 1)
-            sleep_delay = 0.2
+            sleep_delay = 0.1
             for name in self.window_names:
                 if "MAIN" in name: # main character should not join, only create
                     continue
@@ -242,10 +242,14 @@ class Client:
             if "MAIN" in name:
                 continue
             try:
+                position = self.get_window_position(name)
                 self.get_window_front(name)
-                time.sleep(0.2)
+                time.sleep(0.1)
                 pyautogui.press("'") # Make sure this key is your key to change graphics
-                time.sleep(0.2)
+                time.sleep(0.1)
+                pyautogui.moveTo(position[0]+534, position[1]+392)
+                pyautogui.click(x=position[0]+534, y=position[1]+392) # coord for left click on exit menu
+                time.sleep(0.1)
                 self.console.log_message(f"Changed {name} to legacy graphic", 1)
             except:
                 self.console.log_message(f"Error changing to legacy for {name}", 3)

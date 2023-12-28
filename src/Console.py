@@ -8,7 +8,6 @@ class Console:
         self.parent = parent
         self.console = tk.Toplevel(parent)
         self.console.title("Console")
-        self.console.resizable(0,0)
         self.console.protocol("WM_DELETE_WINDOW", self.disable_close)
         self.console.configure(bg="black")
         self.text_area = scrolledtext.ScrolledText(self.console, wrap=tk.WORD, width=85, height=60, bg="black", fg="white", borderwidth=0, highlightthickness=0)
