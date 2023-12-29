@@ -21,7 +21,7 @@ class Help:
     def info_text(self):
         return "1. Choose D2R.exe path\n2. Enter how many clients you want to launch\n3. Press Launch button and wait until done\n\
 4. Go into game with your main char\n5. Go to the lobby with leechers and join a random game\n6. Re-size for the next game to work properly\n\
-7. You can use legacy settings (recommanded) via the Legacy button\n8. Press Next button to join your main char\n9. Enjoy!"
+7. You can use legacy settings (recommended) via the Legacy button\n8. Press Next button to join your main char\n9. Enjoy!"
 
     # Close function of the help window
     def close_help_window(self):
