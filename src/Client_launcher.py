@@ -67,7 +67,7 @@ class Client:
             if username == "" or password == "" or region == "":
                 break
 
-            command = f"{self.diablo_path} -username {username} -password { password} -region {region}"
+            command = f"{self.diablo_path} -username {username} -password {password} -region {region}"
             pid = ""
             try:
                 process = subprocess.Popen(command)
