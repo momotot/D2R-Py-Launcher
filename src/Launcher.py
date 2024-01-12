@@ -4,6 +4,7 @@ import Console
 import Client_launcher
 import tkinter as tk
 from tkinter import filedialog
+import threading
 
 class Launcher:
     def __init__(self, root):
@@ -54,7 +55,7 @@ class Launcher:
         clients = tk.Entry(self.root, textvariable=self.client_amount, justify="center", width=10)
         clients.grid(row=2, column=1, pady=5, padx=5, sticky="ew")
 
-        submit_clients = tk.Button(self.root, text="Launch D2R", command=self.process_clients, bg="grey", width=20)
+        submit_clients = tk.Button(self.root, text="Launch D2R", command=lambda: threading.Thread(target=self.process_clients).start(), bg="grey", width=20)
         submit_clients.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
 
         next_game = tk.Button(self.root, text="Next game", command=self.join_game, bg="grey", width=20)
