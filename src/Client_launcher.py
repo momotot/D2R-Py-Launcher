@@ -12,8 +12,6 @@ import psutil
 import re
 import tkinter as tk
 from tkinter import ttk
-import cv2
-import numpy as np
 
 class Client:   
     def __init__ (self, parent, clients, folder_path, path, console):
@@ -282,7 +280,7 @@ class Client:
                 if "MAIN" in name:
                     self.get_window_front(name)
                     break
-                
+
         except:
             self.console.log_message(f"Failed to re-size {name} on launch", 2)
 
