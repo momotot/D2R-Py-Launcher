@@ -5,20 +5,27 @@ import Client_launcher
 import tkinter as tk
 from tkinter import filedialog
 import threading
+import reader
+import gametime
+import overlay
 
 class Launcher:
     def __init__(self, root):
         self.root = root
         self.client_check = False
         self.client_obj = None
+        self.reader = None
+        self.game_tracker = None
+
         self.initiate_app()
         self.decorate_app()
         self.initiate_console()
-        self.folder_path = os.path.dirname(os.path.abspath(__file__))
+        self.initiate_game_tracker()
+        self.__folder_path = os.path.dirname(os.path.abspath(__file__))
     
     # Initiates several parameters of the app
     def initiate_app(self):
-        self.root.title("D2R-Py-Launcher 1.0.0")
+        self.root.title("D2R-Py-Launcher 1.1.0")
         self.root.resizable(0,0)
         self.root.configure(bg="black")
         self.displayed_path = tk.StringVar()
@@ -58,17 +65,23 @@ class Launcher:
         submit_clients = tk.Button(self.root, text="Launch D2R", command=lambda: threading.Thread(target=self.process_clients).start(), bg="grey", width=20)
         submit_clients.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
 
-        next_game = tk.Button(self.root, text="Next game", command=self.join_game, bg="grey", width=20)
+        next_game = tk.Button(self.root, text="Next game", command=lambda: threading.Thread(target=self.join_game).start(), bg="grey", width=20)
         next_game.grid(row=4, column=1, pady=5, padx=5, sticky="ew")
 
-        legacy_button = tk.Button(self.root, text="Legacy settings", command=self.legacy_settings, bg="grey", width=20)
+        legacy_button = tk.Button(self.root, text="Legacy settings", command=lambda: threading.Thread(target=self.legacy_settings).start(), bg="grey", width=20)
         legacy_button.grid(row=5, column=0, pady=5, padx=5, sticky="ew")
 
-        resize_button = tk.Button(self.root, text="Re-size", command=self.resize, bg="grey", width=20)
+        resize_button = tk.Button(self.root, text="Re-size", command=lambda: threading.Thread(target=self.resize).start(), bg="grey", width=20)
         resize_button.grid(row=5, column=1, pady=5, padx=5, sticky="ew")
 
         console_button = tk.Button(self.root, text="Toggle console", command=self.toggle_console, bg="grey", width=20)
         console_button.grid(row=4, column=0, pady=5, padx=5, sticky="ew")
+
+        memory_button = tk.Button(self.root, text="Game time", command=lambda: threading.Thread(target=self.read_stats).start(), bg="grey", width=20)
+        memory_button.grid(row=6, column=1, pady=5, padx=5, sticky="ew")
+
+        reset_reader_button = tk.Button(self.root, text="Remove game time", command=self.remove_reader, bg="grey", width=20)
+        reset_reader_button.grid(row=7, column=1, pady=5, padx=5, sticky="ew")
 
         exit_button = tk.Button(self.root, text="Terminate PID", command=self.exit_diablo, bg="grey", width=20)
         exit_button.grid(row=6, column=0, pady=5, padx=5, sticky="ew")
@@ -95,10 +108,21 @@ class Launcher:
         self.console = Console.Console(self.root)
         self.console.log_message("Console window created", 1)
     
+    def initiate_game_tracker(self):
+        self.game_tracker = gametime.GameTimeTracker()
+        self.console.log_message("Game tracker created", 1)
+    
     # Initializing the help object
     def show_help(self):
         self.help_window = Help_window.Help(self.root, self.console)
         self.console.log_message("Help window launched", 1)
+    
+    # Calling the removal of reader and overlay objects
+    def remove_reader(self):
+        if self.reader:
+            self.destroy_objects()
+        else:
+            self.console.log_message("No reader object exists", 3)
 
     # Exits the app
     def exit_app(self):
@@ -145,7 +169,7 @@ class Launcher:
                         self.client_obj.parse_config_and_launch()
                         self.client_obj.change_window_title()
                     else:
-                        self.client_obj = Client_launcher.Client(self.root, self.client_amount.get(), self.folder_path, self.path.get(), self.console)
+                        self.client_obj = Client_launcher.Client(self.root, self.client_amount.get(), self.__folder_path, self.path.get(), self.console)
                         self.client_amount.set("")
                     if self.client_obj is not None:
                         self.client_check = True
@@ -183,6 +207,31 @@ class Launcher:
             self.client_obj.join_game()
         else:
             self.console.log_message("You must launch the game first", 3)
+    
+    # When game time is pressed the function creates the overlay and initialize the reader object
+    def read_stats(self):
+        if self.client_check:
+            if self.reader is None:
+                for name, _ in self.client_obj.process_info.items():
+                    if "[MAIN]" in name:
+                        self.overlay_obj = overlay.Overlay(self.root, self.console, self.client_obj, self.game_tracker)
+                        self.reader = reader.MemoryReader(self, self.console, self.client_obj, self.game_tracker, self.overlay_obj)
+                        self.reader.check_in_game_status()
+                        break
+                else:
+                    self.console.log_message("Main char not loaded", 2)
+            else:
+                self.console.log_message("Reader already initiated", 2)
+        else:
+            self.console.log_message("You must launch the game first", 3)
+
+    # removing the reader and overlay object and resets
+    def destroy_objects(self):
+        self.reader.stop_event.set()
+        self.overlay_obj.remove_label()
+        self.reader = None
+        self.overlay_obj = None
+        self.console.log_message("Destroyed overlay and reader object", 1)
 
 # MAIN LOOP
 if __name__ == "__main__":
