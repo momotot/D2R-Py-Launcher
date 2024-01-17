@@ -52,3 +52,7 @@ class GameTimeTracker:
             return self.__average_time / self.__game_count
         else:
             return self.__average_time
+    
+    # getter for the game count
+    def get_game_count(self):
+        return self.__game_count

@@ -49,17 +49,19 @@ class Overlay:
                 elapsed_time = int(self.game_tracker.get_current_time())
                 last_game_time = int(self.game_tracker.get_last_game_time())
                 average_game_time = int(self.game_tracker.get_average_time())
+                game_count = self.game_tracker.get_game_count()+1
                 formatted_time_ingame = self.game_tracker.format_time(elapsed_time)
                 formatted_time_lastgame = self.game_tracker.format_time(last_game_time)
                 formatted_time_average = self.game_tracker.format_time(average_game_time)
-                self.label.configure(text=f"In-game time: {formatted_time_ingame}\nLast game time: {formatted_time_lastgame}\nAverage game time: {formatted_time_average}",
+                self.label.configure(text=f"Game #{game_count}\nIn-game time: {formatted_time_ingame}\nLast game time: {formatted_time_lastgame}\nAverage game time: {formatted_time_average}",
                                      justify="left")
             else:
                 last_game_time = int(self.game_tracker.get_last_game_time())
                 average_game_time = int(self.game_tracker.get_average_time())
+                game_count = self.game_tracker.get_game_count()
                 formatted_time_lastgame = self.game_tracker.format_time(last_game_time)
                 formatted_time_average = self.game_tracker.format_time(average_game_time)
-                self.label.configure(text=f"In-game time: Not in game\nLast game time: {formatted_time_lastgame}\nAverage game time: {formatted_time_average}",
+                self.label.configure(text=f"Game count: {game_count}\nIn-game time: Not in game\nLast game time: {formatted_time_lastgame}\nAverage game time: {formatted_time_average}",
                                       justify="left")
     
     # function to update the gui/label to the specific game window
