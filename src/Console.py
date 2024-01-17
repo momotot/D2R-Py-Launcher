@@ -8,9 +8,9 @@ class Console:
         self.parent = parent
         self.console = tk.Toplevel(parent)
         self.console.title("Console")
-        self.console.protocol("WM_DELETE_WINDOW", self.disable_close)
+        self.console.protocol("WM_DELETE_WINDOW", self.close_window)
         self.console.configure(bg="black")
-        self.text_area = scrolledtext.ScrolledText(self.console, wrap=tk.WORD, width=85, height=60, bg="black", fg="white", borderwidth=0, highlightthickness=0)
+        self.text_area = scrolledtext.ScrolledText(self.console, wrap=tk.WORD, width=85, height=40, bg="black", fg="white", borderwidth=0, highlightthickness=0)
         self.text_area.pack(expand=True, fill="both")
         self.text_area.tag_configure("white_tag", foreground="white")
         self.text_area.tag_configure("yellow_tag", foreground="yellow")
@@ -39,7 +39,8 @@ class Console:
 
     # Close function
     def close_window(self):
-        self.console.destroy()
+        self.console.withdraw()
+        self.log_message("Hiding console window", 1)
     
     # Disables the close function so the console window is always running
     def disable_close(self):
