@@ -12,6 +12,7 @@ import psutil
 import re
 import tkinter as tk
 from tkinter import ttk
+import threading
 
 class Client:   
     def __init__ (self, parent, clients, folder_path, path, console):
@@ -20,12 +21,15 @@ class Client:
         self.folder_path = folder_path
         self.diablo_path = path
         self.console = console
-        self.launched = 0
+
         self.legacy = False  
         self.process_dict = {}
         self.window_names = [] 
         self.process_info = {}
         self.parse_config_and_launch()
+
+        self.check_process_thread = threading.Thread(target=self.check_active_processes, daemon=True)
+        self.check_process_thread.start()
     
     # Reads the config.ini
     def read_config(self):
@@ -335,6 +339,28 @@ class Client:
             self.checkbox_window.destroy()
         except:
             self.console.log_message(f"Failed to terminate PID", 3)
+
+    # continuously scans for processes to remove the in-active pids
+    def check_active_processes(self):
+        while True:
+            try:
+                items_to_remove = []
+                for name, pid in self.process_info.items():
+                    try:
+                        process = psutil.Process(pid)
+                        continue
+                    except psutil.NoSuchProcess:
+                        items_to_remove.append(name)
+                
+                for name in items_to_remove:
+                    del self.process_info[name]
+                    if name in self.window_names:
+                        self.window_names.remove(name)
+                    self.console.log_message(f"Removed {name} because not active", 2)
+            except:
+                self.console.log_message(f"Error checking active processes", 3)
+            time.sleep(1)
+
 
     # Checkbox window to list all active PID's and selection for termination
     def checkbox(self):
