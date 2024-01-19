@@ -13,6 +13,9 @@ import re
 import tkinter as tk
 from tkinter import ttk
 import threading
+import cv2
+import numpy as np
+from pathlib import Path
 
 class Client:   
     def __init__ (self, parent, clients, folder_path, path, console):
@@ -94,9 +97,13 @@ class Client:
             clients_launched += 1
             time.sleep(1)
             self.terminate_handle(name, pid)
-            self.get_to_start_screen()
+            #self.get_to_start_screen()
+            while not self.is_target_image_present_two():
+                pyautogui.press("space")
+                time.sleep(0.2)
             self.console.log_message(f"{name} at start screen", 1)
-        self.change_window_title()
+            self.change_window_title()
+            self.enter_lobby(name)
         self.resize_window_start() 
 
     # Find the handle and terminate it to be able to run several d2r's
@@ -140,9 +147,10 @@ class Client:
                         for name, pid in list(self.process_dict.items()):
                             if pid == found_pid:
                                 try:
-                                    win32gui.SetWindowText(hwnd, f"{name}")
-                                    self.console.log_message(f"Changed window name to {name}", 1)
-                                    del self.process_dict[name]
+                                    if win32gui.GetWindowText(hwnd) != name:
+                                        win32gui.SetWindowText(hwnd, f"{name}")
+                                        self.console.log_message(f"Changed window name to {name}", 1)
+                                        del self.process_dict[name]
                                 except:
                                     self.console.log_message(f"Failed to change name to {name}", 3)
                 win32gui.EnumWindows(callback, None)
@@ -233,7 +241,7 @@ class Client:
                 if "MAIN" in name:
                     self.get_window_front(name)
                     break
-            
+               
             self.resize_window_game()
             
         except:
@@ -277,9 +285,7 @@ class Client:
                 if current_width != 1920 or current_height != 1080:
                     window.resizeTo(1920,1080)
                     self.console.log_message(f"Re-sized {name} to 1920x1080", 1)
-                else:
-                    self.console.log_message(f"{name} is already 1920x1080", 1)
-
+                    
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)
@@ -390,3 +396,37 @@ class Client:
     def close_checkbox(self):
         self.console.log_message("Checkbox for termination closed", 1)
         self.checkbox_window.destroy()
+    
+    def enter_lobby(self, name):
+        for key in self.process_info.keys():
+            if "[MAIN]" and name in key:
+                name = key
+        if "[MAIN]" in name:
+            return
+        position = self.get_window_position(name)
+        pyautogui.moveTo(position[0]+1104, position[1]+975)
+        pyautogui.click(x=position[0]+1104, y=position[1]+975) # press enter lobby
+        time.sleep(0.1)
+        pyautogui.moveTo(position[0]+1227, position[1]+289)
+        pyautogui.click(x=position[0]+1227, y=position[1]+289) # press first game
+        pyautogui.click(x=position[0]+1227, y=position[1]+289) 
+        pyautogui.click(x=position[0]+1227, y=position[1]+289) 
+        self.console.log_message(f"{name} in game", 1)
+
+    def is_target_image_present_two(self):
+        
+        target_image_path = Path(__file__).parent / "Pictures" / "Start.png"
+        target_image = cv2.imread(str(target_image_path))
+
+        screenshot = pyautogui.screenshot()
+        screenshot = np.array(screenshot)
+        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
+        result = cv2.matchTemplate(screenshot, target_image, cv2.TM_CCOEFF_NORMED)
+        
+        threshold = 0.8
+        loc = np.where(result >= threshold)
+        
+        if len(loc[0]) > 0:
+            return True
+        
+        return False
