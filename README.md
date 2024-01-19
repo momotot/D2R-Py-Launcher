@@ -1,11 +1,12 @@
 # D2R-Py-Launcher 1.1.0
 
 ![D2R-Py-Launcher](https://i.imgur.com/rRtsjvu.png)
-![D2R-Py-Launcher](https://i.imgur.com/p3Cms9s.png)
+![D2R-Py-Launcher](https://i.imgur.com/r55eIRt.png)
 
 ## Table of Contents
 
 - [Description](#Description)
+- [Disclaimer](#Disclaimer)
 - [Features](#Features)
 - [Requirements](#Requirements)
 - [Installation / Usage](#Installation-Usage)
@@ -19,6 +20,13 @@
 D2R-Py-Launcher is a Python-based application to simplify the process of launching multiple instances of Diablo II: Resurrected (D2R) on a single machine.
 Using keyboard inputs and mouse clicks to execute actions without write operations to game memory. Possible to monitor in-game time by reading game memory.
 Packet reading working for version 1.6.77312.
+
+# Disclaimer
+
+**Use at your own risk**
+
+The software provided in this repository is distributed "as is" and with no warranties. The author and contributors are not responsible for any misuse, damage, loss of data, or any other consequences resulting from the use of this software.
+The author disclaims any liability for any consequences arising from the us or misuse of this software.
 
 ## Features
 
