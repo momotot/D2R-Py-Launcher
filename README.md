@@ -79,8 +79,8 @@ The author disclaims any liability for any consequences arising from the us or m
    region=eu.actual.battle.net (eu / na /kr)
    
 7. **Run the app**
-  ```bash
-     Run the Start.bat file
+   ```bash
+   Run the Start.bat file
 
 8. **Joining games**
    ```bash
