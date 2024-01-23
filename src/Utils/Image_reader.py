@@ -7,6 +7,7 @@ import pygetwindow
 from fuzzywuzzy import fuzz
 import re
 import threading
+import os
 
 import Data.GameAreas as GameAreas
 import Data.Pattern_info as pattern_info
@@ -23,8 +24,13 @@ class ImageReader():
 
     # function to parse the image at the specific coords (top right corner) for 1920x1080 and get the area
     def get_current_area(self):
+        tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        if not os.path.exists(tesseract_path):
+            self._console.log_message("Tesseract path not found!", 3)
+            return
+        
+        pytesseract.pytesseract.tesseract_cmd = tesseract_path
         x, y, w, h = self._window.left + 1650, self._window.top + 71, 250, 30 
         roi = pyautogui.screenshot(region=(x, y, w, h))
         #roi.save("debug_prints/screenshot_debug.png") # enable if you want to debug
