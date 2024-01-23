@@ -8,11 +8,11 @@ from pymem import *
 
 class MemoryReader:
     def __init__(self, root, console, client_obj, game_tracker, overlay):
-        self.root = root
-        self.console = console
-        self.client_obj = client_obj
-        self.game_tracker = game_tracker
-        self.overlay_obj = overlay
+        self._root = root
+        self._console = console
+        self._client_obj = client_obj
+        self._game_tracker = game_tracker
+        self._overlay_gametime_obj = overlay
         self.hWnd = None
         self.pid = None
         self.handle = None
@@ -25,7 +25,7 @@ class MemoryReader:
         self._fail_counter = 0
         
         self.stop_event = threading.Event()
-        self.overlay_obj.run()
+        self._overlay_gametime_obj.run()
 
     # Function to read data from the specified memory address
     def read_memory(self, handle, address, data_type):
@@ -35,7 +35,7 @@ class MemoryReader:
     # Function to get information about in game status
     def get_in_game_info(self):
         window_name = None
-        for name in self.client_obj.window_names:
+        for name in self._client_obj.window_names:
             if "[MAIN]" in name:
                 window_name = name
         self.hWnd = win32gui.FindWindow(0, window_name)
@@ -49,17 +49,17 @@ class MemoryReader:
         try:
             self.in_game = self.read_memory(self.handle, self._ingame_address, "i")
             if self.in_game:
-                self.game_tracker.in_game = True
+                self._game_tracker.in_game = True
                 return self.in_game
             else:
-                self.game_tracker.in_game = False
+                self._game_tracker.in_game = False
                 return self.in_game
         except:
             if self.hWnd and self._fail_counter < 3:
-                self.console.log_message(f"Failed to read in game", 3)
+                self._console.log_message(f"Failed to read in game", 3)
                 self._fail_counter += 1
             if self._fail_counter == 3:
-                self.root.destroy_objects()
+                self._root.destroy_objects()
             return self.in_game
     
     def check_area_scan_in_game(self, name):
@@ -78,7 +78,7 @@ class MemoryReader:
             else:
                 return False
         except:
-            self.console.log_message("Failed to read in game", 3)
+            self._console.log_message("Failed to read in game", 3)
     
     #  Function to continuously check and update the in-game status
     def check_in_game_status(self):
@@ -87,21 +87,21 @@ class MemoryReader:
             in_game = self.get_in_game_info()
 
             if in_game and not reported_in_game:
-                self.game_tracker.start_tracking()
+                self._game_tracker.start_tracking()
                 reported_in_game = True
             elif not in_game and reported_in_game:
-                self.game_tracker.stop_tracking()
+                self._game_tracker.stop_tracking()
                 reported_in_game = False
-                self.game_tracker.average_time()
+                self._game_tracker.average_time()
 
-            self.game_tracker.update_time()
-            self.overlay_obj.update_label()          
+            self._game_tracker.update_time()
+            self._overlay_gametime_obj.update_label()          
             time.sleep(1)
     
     # Function to get char name 
     def get_charname_info(self):
         window_name = None
-        for name in self.client_obj.window_names:
+        for name in self._client_obj.window_names:
             if "[MAIN]" in name:
                 window_name = name
         self.hWnd = win32gui.FindWindow(0, window_name)
@@ -117,13 +117,13 @@ class MemoryReader:
             charname = self.handle.read_string(pointer_to_charname)
             return charname
         except:
-            self.console.log_message(f"Failed to read char name", 3)
+            self._console.log_message(f"Failed to read char name", 3)
             return ""
 
     # Function to get the game name
     def get_gamename_info(self):
         window_name = None
-        for name in self.client_obj.window_names:
+        for name in self._client_obj.window_names:
             if "[MAIN]" in name:
                 window_name = name
         self.hWnd = win32gui.FindWindow(0, window_name)
@@ -139,13 +139,13 @@ class MemoryReader:
             gamename = self.handle.read_string(pointer_to_gamename)
             return gamename
         except:
-            self.console.log_message(f"Failed to read game name", 3)
+            self._console.log_message(f"Failed to read game name", 3)
             return ""
         
     # Function to get the game password
     def get_password_info(self):
         window_name = None
-        for name in self.client_obj.window_names:
+        for name in self._client_obj.window_names:
             if "[MAIN]" in name:
                 window_name = name
         self.hWnd = win32gui.FindWindow(0, window_name)
@@ -161,13 +161,13 @@ class MemoryReader:
             password = self.handle.read_string(pointer_to_password)
             return password
         except:
-            self.console.log_message(f"Failed to read password", 3)
+            self._console.log_message(f"Failed to read password", 3)
             return ""
     
     # Function to get load game status
     def load_game_info(self):
         window_name = None
-        for name in self.client_obj.window_names:
+        for name in self._client_obj.window_names:
             window_name = name
             hWnd = win32gui.FindWindow(0, window_name)
             pid = win32process.GetWindowThreadProcessId(hWnd)[1]
@@ -181,7 +181,7 @@ class MemoryReader:
                 while not load_complete:
                     time.sleep(1)
                 else:
-                    self.client_obj.resize_window_game()
-                    self.client_obj.change_to_legacy()
+                    self._client_obj.resize_window_game()
+                    self._client_obj.change_to_legacy()
             except:
-                self.console.log_message(f"Failed to read load game info", 3)
+                self._console.log_message(f"Failed to read load game info", 3)

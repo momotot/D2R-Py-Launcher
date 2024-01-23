@@ -19,11 +19,11 @@ from pathlib import Path
 
 class Client:   
     def __init__ (self, root, clients, folder_path, path, console):
-        self.root = root
+        self._root = root
         self.clients = clients
-        self.folder_path = folder_path
+        self._folder_path = folder_path
         self.diablo_path = path
-        self.console = console
+        self._console = console
 
         self.legacy = False  
         self.process_dict = {}
@@ -78,7 +78,7 @@ class Client:
             pid = ""
             try:
                 process = subprocess.Popen(command)
-                self.console.log_message(f"D2R #{clients_launched+1} launched", 1)
+                self._console.log_message(f"D2R #{clients_launched+1} launched", 1)
 
                 if not main_char_launched:
                     pid = process.pid
@@ -92,7 +92,7 @@ class Client:
                     self.process_info[name] = process.pid
                     self.window_names.append(name)
             except:
-                self.console.log_message(f"Failed to launch D2R #{clients_launched+1}", 3)
+                self._console.log_message(f"Failed to launch D2R #{clients_launched+1}", 3)
 
             clients_launched += 1
             time.sleep(1)
@@ -105,14 +105,14 @@ class Client:
                 count += 1
                 if count == 25:
                     break
-            self.console.log_message(f"{name} at start screen", 1)
+            self._console.log_message(f"{name} at start screen", 1)
             self.change_window_title()
             self.enter_lobby(name)
         self.resize_window_start() 
 
     # Find the handle and terminate it to be able to run several d2r's
     def terminate_handle(self,name, pid):
-        self.console.log_message(f"Closing handle for {name}, PID: {pid}", 1)
+        self._console.log_message(f"Closing handle for {name}, PID: {pid}", 1)
         handle64_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'handle64.exe')
 
         # Run handle64.exe to get handle info
@@ -137,7 +137,7 @@ class Client:
                     result = subprocess.run(handle_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
                     
                     if result.returncode != 0:
-                        self.console.log_message(f"Error: Unable to close handle for {proc_id_populated} {handle_id_populated}", 3)
+                        self._console.log_message(f"Error: Unable to close handle for {proc_id_populated} {handle_id_populated}", 3)
 
     # Change window titles to names in config
     def change_window_title(self):
@@ -153,13 +153,13 @@ class Client:
                                 try:
                                     if win32gui.GetWindowText(hwnd) != name:
                                         win32gui.SetWindowText(hwnd, f"{name}")
-                                        self.console.log_message(f"Changed window name to {name}", 1)
+                                        self._console.log_message(f"Changed window name to {name}", 1)
                                         del self.process_dict[name]
                                 except:
-                                    self.console.log_message(f"Failed to change name to {name}", 3)
+                                    self._console.log_message(f"Failed to change name to {name}", 3)
                 win32gui.EnumWindows(callback, None)
         except:
-            self.console.log_message(f"Error in change_window_title", 3)
+            self._console.log_message(f"Error in change_window_title", 3)
     
     # Make the window appear in the foreground to perform actions
     def get_window_front(self, window_name):
@@ -186,9 +186,9 @@ class Client:
     def join_game(self):
         try:
             if len(self.window_names) == 0:
-                self.console.log_message("No window(s) opened", 2)
+                self._console.log_message("No window(s) opened", 2)
                 return
-            self.console.log_message("Attempting next game join", 1)
+            self._console.log_message("Attempting next game join", 1)
             sleep_delay = 0.1
             for name in self.window_names:
                 if "MAIN" in name: # main character should not join, only create
@@ -216,7 +216,7 @@ class Client:
                         pyautogui.moveTo(position[0]+430, position[1]+271)
                         pyautogui.click(x=position[0]+430, y=position[1]+271) # coord for left click on join game
                         time.sleep(sleep_delay)
-                        self.console.log_message(f"{name} joined a new game", 1)
+                        self._console.log_message(f"{name} joined a new game", 1)
                     else: # positions for legacy
                         time.sleep(sleep_delay)
                         pyautogui.press("esc")
@@ -236,9 +236,9 @@ class Client:
                         pyautogui.moveTo(position[0]+430, position[1]+271)
                         pyautogui.click(x=position[0]+430, y=position[1]+271) # coord for left click on join game
                         time.sleep(sleep_delay)
-                        self.console.log_message(f"{name} joined a new game", 1)
+                        self._console.log_message(f"{name} joined a new game", 1)
                 else:
-                    self.console.log_message("No valid window position", 3)      
+                    self._console.log_message("No valid window position", 3)      
             self.legacy = False
             
             for name in self.window_names:
@@ -249,14 +249,14 @@ class Client:
             self.resize_window_game()
             
         except:
-            self.console.log_message("Failed to join next game", 3)
+            self._console.log_message("Failed to join next game", 3)
     
     # Performs the change by pressing the change graphic key for each window. Utilized through the "legacy" button
     def change_to_legacy(self):
         if len(self.window_names) == 0:
-            self.console.log_message("No window(s) opened", 2)
+            self._console.log_message("No window(s) opened", 2)
             return
-        self.console.log_message("Attempting to change to legacy graphics", 1)
+        self._console.log_message("Attempting to change to legacy graphics", 1)
         for name in self.window_names:
             if "MAIN" in name:
                 continue
@@ -269,9 +269,9 @@ class Client:
                 pyautogui.moveTo(position[0]+534, position[1]+392)
                 pyautogui.click(x=position[0]+534, y=position[1]+392) # coord for left click on exit menu
                 time.sleep(0.1)
-                self.console.log_message(f"Changed {name} to legacy graphic", 1)
+                self._console.log_message(f"Changed {name} to legacy graphic", 1)
             except:
-                self.console.log_message(f"Error changing to legacy for {name}", 3)
+                self._console.log_message(f"Error changing to legacy for {name}", 3)
         self.legacy = True
         
         for name in self.window_names:
@@ -282,13 +282,13 @@ class Client:
     # Re-sizes all windows to 1920x1080 currently to be able to go into games
     def resize_window_start(self):
         try:
-            self.console.log_message("Attempting to re-size window(s)", 1)
+            self._console.log_message("Attempting to re-size window(s)", 1)
             for name in self.window_names:
                 window = pygetwindow.getWindowsWithTitle(name)[0]
                 current_width, current_height = window.size
                 if current_width != 1920 or current_height != 1080:
                     window.resizeTo(1920,1080)
-                    self.console.log_message(f"Re-sized {name} to 1920x1080", 1)
+                    self._console.log_message(f"Re-sized {name} to 1920x1080", 1)
                     
             for name in self.window_names:
                 if "MAIN" in name:
@@ -296,34 +296,34 @@ class Client:
                     break
 
         except:
-            self.console.log_message(f"Failed to re-size {name} on launch", 2)
+            self._console.log_message(f"Failed to re-size {name} on launch", 2)
 
     # Re-sizes all "joiners" when they are in-game by pressing the "Legacy" button
     def resize_window_game(self):
         try:
             if len(self.window_names) == 0:
-                self.console.log_message("No window(s) opened", 2)
+                self._console.log_message("No window(s) opened", 2)
                 return
-            self.console.log_message("Attempting to re-size window(s)", 1)
+            self._console.log_message("Attempting to re-size window(s)", 1)
             for name in self.window_names:
                 if not "MAIN" in name:
                     window = pygetwindow.getWindowsWithTitle(name)[0]
                     current_width, current_height = window.size
                     if current_width != 800 or current_height != 600:
                         window.resizeTo(800,600)
-                        self.console.log_message(f"Re-sized {name} to 800x600", 1)
+                        self._console.log_message(f"Re-sized {name} to 800x600", 1)
                 elif "MAIN" in name:
                     window = pygetwindow.getWindowsWithTitle(name)[0]
                     current_width, current_height = window.size
                     if current_width != 1920 or current_height != 1080:
                         window.resizeTo(1920,1080)
-                        self.console.log_message(f"Re-sized {name} to 1080", 1)
+                        self._console.log_message(f"Re-sized {name} to 1080", 1)
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)
                     break
         except:
-            self.console.log_message(f"Failed to re-size {name}", 2)
+            self._console.log_message(f"Failed to re-size {name}", 2)
     
     # iterates the processes to get active D2R's and their PID's
     def get_pids(self):
@@ -336,7 +336,7 @@ class Client:
     # Terminates the selected process
     def terminate_pid(self):
         try:
-            self.console.log_message("Attempting to terminate PID(s)", 1)
+            self._console.log_message("Attempting to terminate PID(s)", 1)
             terminated_names = []
             for name, var in self.checkbox_dict.items():
                 if var.get() == 1:
@@ -345,7 +345,7 @@ class Client:
                         handle = win32api.OpenProcess(win32con.PROCESS_TERMINATE, 0, pid)
                         win32process.TerminateProcess(handle, 0)
                         win32api.CloseHandle(handle)
-                        self.console.log_message(f"PID: {pid} for {name} terminated", 1)
+                        self._console.log_message(f"PID: {pid} for {name} terminated", 1)
                         terminated_names.append(name)
             # remove the clients from the lists if terminated
             for name in terminated_names:
@@ -353,10 +353,10 @@ class Client:
                 if name in self.window_names:
                     self.window_names.remove(name)
             terminated_names = []
-            self.console.log_message("Checkbox for termination closed", 1)
+            self._console.log_message("Checkbox for termination closed", 1)
             self.checkbox_window.destroy()
         except:
-            self.console.log_message(f"Failed to terminate PID", 3)
+            self._console.log_message(f"Failed to terminate PID", 3)
 
     # continuously scans for processes to remove the in-active pids
     def check_active_processes(self):
@@ -374,18 +374,18 @@ class Client:
                     del self.process_info[name]
                     if name in self.window_names:
                         self.window_names.remove(name)
-                    self.console.log_message(f"Removed {name} because not active", 2)
+                    self._console.log_message(f"Removed {name} because not active", 2)
             except:
-                self.console.log_message(f"Error checking active processes", 3)
+                self._console.log_message(f"Error checking active processes", 3)
             time.sleep(1)
 
 
     # Checkbox window to list all active PID's and selection for termination
     def checkbox(self):
-        self.checkbox_window = tk.Toplevel(self.root)
+        self.checkbox_window = tk.Toplevel(self._root)
         self.checkbox_window.title("Select clients")
-        x = self.root.winfo_x()
-        y = self.root.winfo_y()
+        x = self._root.winfo_x()
+        y = self._root.winfo_y()
         self.checkbox_window.geometry(f"400x400+{x}+{y}")
         self.checkbox_window.configure()
         self.checkbox_window.resizable(0,0)
@@ -402,11 +402,11 @@ class Client:
         terminate_button = ttk.Button(self.checkbox_window, text="Terminate Selected", command=self.terminate_pid)
         terminate_button.pack()
         self.checkbox_window.protocol("WM_DELETE_WINDOW", self.close_checkbox)
-        self.console.log_message("Checkbox for termination opened", 1)
+        self._console.log_message("Checkbox for termination opened", 1)
     
     # Just a close function
     def close_checkbox(self):
-        self.console.log_message("Checkbox for termination closed", 1)
+        self._console.log_message("Checkbox for termination closed", 1)
         self.checkbox_window.destroy()
     
     def enter_lobby(self, name):
@@ -423,7 +423,7 @@ class Client:
         pyautogui.click(x=position[0]+1227, y=position[1]+289) # press first game
         pyautogui.click(x=position[0]+1227, y=position[1]+289) 
         pyautogui.click(x=position[0]+1227, y=position[1]+289) 
-        self.console.log_message(f"{name} in game", 1)
+        self._console.log_message(f"{name} in game", 1)
 
     def is_start_image_present(self):
         window_name = "Diablo II: Resurrected"
