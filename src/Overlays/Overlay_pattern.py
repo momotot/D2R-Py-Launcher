@@ -48,12 +48,10 @@ class OverlayPatternInfo:
     # function to update the label with the area text
     def update_label(self):
         if self.label:
-            if self._game_tracker.in_game:
-                text_to_post = self._image_scanner.get_area_text()
-                self.label.configure(text=f"{text_to_post}", justify="left")
-            else:
-                text_to_post = self._image_scanner.get_area_text()
-                self.label.configure(text="Not in game", justify="left")
+
+            text_to_post = self._image_scanner.get_area_text()
+            self.label.configure(text=f"{text_to_post}", justify="left")
+
     
     # function to update the gui/label to the specific game window
     def update_gui_status(self, process_found):
