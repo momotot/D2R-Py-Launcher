@@ -87,6 +87,8 @@ class ImageReader():
                 area_name = current_area.name
                 text_for_area = pattern_info.PatternInfo.area_texts.get(area_name, f"Text for {area_name}")
                 self._area_text = text_for_area
+            else:
+                self._area_text = ""
 
             self._overlay_pattern.update_label()
             time.sleep(1)
