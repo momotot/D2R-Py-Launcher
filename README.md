@@ -37,6 +37,7 @@ The author disclaims any liability for any consequences arising from the us or m
 - Legacy settings option.
 - Window resizing option.
 - Option to active overlay to monitor in-game time.
+- Option to present known patterns in an overlay based on current area via tesseract OCR.
 
 ## Requirements
 
@@ -47,7 +48,9 @@ The author disclaims any liability for any consequences arising from the us or m
   - [psutil](https://pypi.org/project/psutil/): `pip install psutil`
   - [pywin32](https://pypi.org/project/pywin32/): `pip install pywin32`
 - **Handle 64:**
-- - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`
+  - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`
+- **Tesseract OCR:**
+  - [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki)`Download it from the site linked`
 
 
 ## Installation-Usage
