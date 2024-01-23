@@ -64,7 +64,11 @@ The author disclaims any liability for any consequences arising from the us or m
    ```bash
    Make sure to download handle64.exe and place it in the src folder
 
-5. **Config setup**
+5. **Tesseract OCR**
+   ```bash
+   Download and install tesseract ocr: https://github.com/UB-Mannheim/tesseract/wiki
+
+6. **Config setup**
    ```bash
    Setup your config.ini with your name, accountname, password and region/realm
    
@@ -77,7 +81,7 @@ The author disclaims any liability for any consequences arising from the us or m
 7. **Run the app**
   ```bash
      Run the Start.bat file
-```
+
 8. **Joining games**
    ```bash
    In order to make the joining of next game to work there are some prerequisite:

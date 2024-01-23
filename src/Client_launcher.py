@@ -18,8 +18,8 @@ import numpy as np
 from pathlib import Path
 
 class Client:   
-    def __init__ (self, parent, clients, folder_path, path, console):
-        self.parent = parent
+    def __init__ (self, root, clients, folder_path, path, console):
+        self.root = root
         self.clients = clients
         self.folder_path = folder_path
         self.diablo_path = path
@@ -98,9 +98,13 @@ class Client:
             time.sleep(1)
             self.terminate_handle(name, pid)
             #self.get_to_start_screen()
-            while not self.is_target_image_present_two():
+            count = 0
+            while not self.is_start_image_present():
                 pyautogui.press("space")
                 time.sleep(0.2)
+                count += 1
+                if count == 25:
+                    break
             self.console.log_message(f"{name} at start screen", 1)
             self.change_window_title()
             self.enter_lobby(name)
@@ -174,7 +178,7 @@ class Client:
     def get_window_position(self, window_name):
         try:
             window = pygetwindow.getWindowsWithTitle(window_name)[0]
-            return window.left, window.top
+            return window.left, window.top, window.width, window.height
         except:
             return None
     
@@ -304,8 +308,16 @@ class Client:
             for name in self.window_names:
                 if not "MAIN" in name:
                     window = pygetwindow.getWindowsWithTitle(name)[0]
-                    window.resizeTo(800,600)
-                    self.console.log_message(f"Re-sized {name} to 800x600", 1)
+                    current_width, current_height = window.size
+                    if current_width != 800 or current_height != 600:
+                        window.resizeTo(800,600)
+                        self.console.log_message(f"Re-sized {name} to 800x600", 1)
+                elif "MAIN" in name:
+                    window = pygetwindow.getWindowsWithTitle(name)[0]
+                    current_width, current_height = window.size
+                    if current_width != 1920 or current_height != 1080:
+                        window.resizeTo(1920,1080)
+                        self.console.log_message(f"Re-sized {name} to 1080", 1)
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)
@@ -370,10 +382,10 @@ class Client:
 
     # Checkbox window to list all active PID's and selection for termination
     def checkbox(self):
-        self.checkbox_window = tk.Toplevel(self.parent)
+        self.checkbox_window = tk.Toplevel(self.root)
         self.checkbox_window.title("Select clients")
-        x = self.parent.winfo_x()
-        y = self.parent.winfo_y()
+        x = self.root.winfo_x()
+        y = self.root.winfo_y()
         self.checkbox_window.geometry(f"400x400+{x}+{y}")
         self.checkbox_window.configure()
         self.checkbox_window.resizable(0,0)
@@ -413,20 +425,30 @@ class Client:
         pyautogui.click(x=position[0]+1227, y=position[1]+289) 
         self.console.log_message(f"{name} in game", 1)
 
-    def is_target_image_present_two(self):
-        
+    def is_start_image_present(self):
+        window_name = "Diablo II: Resurrected"
         target_image_path = Path(__file__).parent / "Pictures" / "Start.png"
-        target_image = cv2.imread(str(target_image_path))
+        target_image_path_two = Path(__file__).parent / "Pictures" / "Start2.png"
 
-        screenshot = pyautogui.screenshot()
-        screenshot = np.array(screenshot)
+        target_image = cv2.imread(str(target_image_path))
+        target_image_two = cv2.imread(str(target_image_path_two))
+
+        window = pygetwindow.getWindowsWithTitle(window_name)[0]
+        x, y, w, h = window.left, window.top, 1920, 1080
+        roi = pyautogui.screenshot(region=(x, y, w, h))
+        #roi.save("loading_debug.png")
+
+        screenshot = np.array(roi)
         screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
+
         result = cv2.matchTemplate(screenshot, target_image, cv2.TM_CCOEFF_NORMED)
-        
+        result_two = result = cv2.matchTemplate(screenshot, target_image_two, cv2.TM_CCOEFF_NORMED)
+
         threshold = 0.8
         loc = np.where(result >= threshold)
+        loc_two = np.where(result_two >= threshold)
         
-        if len(loc[0]) > 0:
+        if len(loc[0]) > 0 or len(loc_two[0] > 0):
             return True
         
         return False

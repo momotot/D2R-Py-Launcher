@@ -1,4 +1,4 @@
-import win32api
+#import win32api
 import win32gui
 import win32process
 import time
@@ -7,8 +7,8 @@ from ctypes import *
 from pymem import *
 
 class MemoryReader:
-    def __init__(self, parent, console, client_obj, game_tracker, overlay):
-        self.parent = parent
+    def __init__(self, root, console, client_obj, game_tracker, overlay):
+        self.root = root
         self.console = console
         self.client_obj = client_obj
         self.game_tracker = game_tracker
@@ -16,13 +16,13 @@ class MemoryReader:
         self.hWnd = None
         self.pid = None
         self.handle = None
-        self.__base_address = None
-        self.__ingame_address = None
-        self.__charname_address = None
-        self.__gamename_address = None
-        self.__password_address = None
+        self._base_address = None
+        self._ingame_address = None
+        self._charname_address = None
+        self._gamename_address = None
+        self._password_address = None
         self.in_game = None
-        self.__fail_counter = 0
+        self._fail_counter = 0
         
         self.stop_event = threading.Event()
         self.overlay_obj.run()
@@ -43,11 +43,11 @@ class MemoryReader:
         self.handle = Pymem()
         self.handle.open_process_from_id(self.pid)
 
-        self.__base_address = self.handle.process_base.lpBaseOfDll
-        self.__ingame_address = self.__base_address + 0x2301DA0
+        self._base_address = self.handle.process_base.lpBaseOfDll
+        self._ingame_address = self._base_address + 0x2301DA0
 
         try:
-            self.in_game = self.read_memory(self.handle, self.__ingame_address, "i")
+            self.in_game = self.read_memory(self.handle, self._ingame_address, "i")
             if self.in_game:
                 self.game_tracker.in_game = True
                 return self.in_game
@@ -55,12 +55,30 @@ class MemoryReader:
                 self.game_tracker.in_game = False
                 return self.in_game
         except:
-            if self.hWnd and self.__fail_counter < 3:
+            if self.hWnd and self._fail_counter < 3:
                 self.console.log_message(f"Failed to read in game", 3)
-                self.__fail_counter += 1
-            if self.__fail_counter == 3:
-                self.parent.destroy_objects()
+                self._fail_counter += 1
+            if self._fail_counter == 3:
+                self.root.destroy_objects()
             return self.in_game
+    
+    def check_area_scan_in_game(self, name):
+        window_name = name
+        hWnd = win32gui.FindWindow(0, window_name)
+        pid = win32process.GetWindowThreadProcessId(hWnd)[1]
+        handle = Pymem()
+        handle.open_process_from_id(pid)
+
+        base_address = handle.process_base.lpBaseOfDll
+        ingame_address = base_address + 0x2301DA0
+        try:
+            in_game = self.read_memory(handle, ingame_address, "i")
+            if in_game:
+                return True
+            else:
+                return False
+        except:
+            self.console.log_message("Failed to read in game", 3)
     
     #  Function to continuously check and update the in-game status
     def check_in_game_status(self):
@@ -91,11 +109,11 @@ class MemoryReader:
         self.handle = Pymem()
         self.handle.open_process_from_id(self.pid)
 
-        self.__base_address = self.handle.process_base.lpBaseOfDll
-        self.__charname_address = self.__base_address + 0x25b4460
+        self._base_address = self.handle.process_base.lpBaseOfDll
+        self._charname_address = self._base_address + 0x25b4460
          
         try:
-            pointer_to_charname = self.read_memory(self.handle, self.__charname_address, "P")
+            pointer_to_charname = self.read_memory(self.handle, self._charname_address, "P")
             charname = self.handle.read_string(pointer_to_charname)
             return charname
         except:
@@ -113,11 +131,11 @@ class MemoryReader:
         self.handle = Pymem()
         self.handle.open_process_from_id(self.pid)
 
-        self.__base_address = self.handle.process_base.lpBaseOfDll
-        self.__gamename_address = self.__base_address + 0x29f3ce0
+        self._base_address = self.handle.process_base.lpBaseOfDll
+        self._gamename_address = self._base_address + 0x29f3ce0
         
         try:
-            pointer_to_gamename = self.read_memory(self.handle, self.__gamename_address, "P")
+            pointer_to_gamename = self.read_memory(self.handle, self._gamename_address, "P")
             gamename = self.handle.read_string(pointer_to_gamename)
             return gamename
         except:
@@ -135,11 +153,11 @@ class MemoryReader:
         self.handle = Pymem()
         self.handle.open_process_from_id(self.pid)
 
-        self.__base_address = self.handle.process_base.lpBaseOfDll
-        self.__password_address = self.__base_address + 0x29f3d38
+        self._base_address = self.handle.process_base.lpBaseOfDll
+        self._password_address = self._base_address + 0x29f3d38
         
         try:
-            pointer_to_password = self.read_memory(self.handle, self.__password_address, "P")
+            pointer_to_password = self.read_memory(self.handle, self._password_address, "P")
             password = self.handle.read_string(pointer_to_password)
             return password
         except:
@@ -155,11 +173,11 @@ class MemoryReader:
             pid = win32process.GetWindowThreadProcessId(hWnd)[1]
             handle = Pymem()
             handle.open_process_from_id(pid)
-            base_address = self.__base_address
-            self.__load_game_address = base_address + 0x2159E48
+            base_address = self._base_address
+            self._load_game_address = base_address + 0x2159E48
 
             try:
-                load_complete = self.read_memory(handle, self.__load_game_address, "i")
+                load_complete = self.read_memory(handle, self._load_game_address, "i")
                 while not load_complete:
                     time.sleep(1)
                 else:
