@@ -63,7 +63,7 @@ The author disclaims any liability for any consequences arising from the us or m
 
 3. **Install dependencies:**
    ```bash
-   pip install pyautogui PyGetWindow psutil pywin32
+   pip install -r requirements.txt
 4. **Handle64**
    ```bash
    Make sure to download handle64.exe and place it in the src folder
