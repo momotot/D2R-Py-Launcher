@@ -22,13 +22,13 @@ class Console:
         
         self.start_log()
         
-    # Start log with computer name, system and machine
     def start_log(self):
+        """Start log with computer name, system and machine"""
         start_message = f"{node()} ~ {system()} ~ {machine()}"
         self.log_message(start_message, 1)
 
-    # Getter for log level
     def get_log_level(self, level):
+        """Getter for log level"""
         if level == 1:
             return "INFO"
         elif level == 2:
@@ -36,25 +36,26 @@ class Console:
         elif level == 3:
             return "ERROR"
 
-    # Close function
     def close_window(self):
+        """Close function"""
         self._console.withdraw()
         self.log_message("Hiding console window", 1)
     
-    # Disables the close function so the console window is always running
     def disable_close(self):
+        """Disables the close function so the console window is always running"""
         pass
     
-    # Function to show the console
     def show_console(self):
+        """Function to show the console"""
         self._console.deiconify()
     
-    # Function to hide the console 
     def hide_console(self):
+        """Function to hide the console"""
         self._console.withdraw()
 
-    # The log message function. Will log white/yellow/red depending on level
+
     def log_message(self, message, level):
+        """The log message function. Will log white/yellow/red depending on level"""
         time_stamp = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         message_to_log = f"[{self.get_log_level(level)}] ~ [{time_stamp}] ~ {message}\n"
 
