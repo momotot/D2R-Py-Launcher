@@ -47,6 +47,10 @@ The author disclaims any liability for any consequences arising from the us or m
   - [PyGetWindow](https://pypi.org/project/PyGetWindow/)
   - [psutil](https://pypi.org/project/psutil/)
   - [pywin32](https://pypi.org/project/pywin32/)
+  - [opencv-python](https://pypi.org/project/opencv-python/)
+  - [numpy](https://pypi.org/project/numpy/)
+  - [pymem](https://pypi.org/project/Pymem/)
+  - [fuzzywuzzy](https://pypi.org/project/fuzzywuzzy/)
   - Install via ```pip install -r requirements.txt``` 
 - **Handle 64**
   - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`
