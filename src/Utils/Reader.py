@@ -27,13 +27,13 @@ class MemoryReader:
         self.stop_event = threading.Event()
         self._overlay_gametime_obj.run()
 
-    # Function to read data from the specified memory address
     def read_memory(self, handle, address, data_type):
+        """Function to read data from the specified memory address"""
         buffer = handle.read_bytes(address, struct.calcsize(data_type))
         return struct.unpack(data_type, buffer)[0]
 
-    # Function to get information about in game status
     def get_in_game_info(self):
+        """Function to get information about in game status"""
         window_name = None
         for name in self._client_obj.window_names:
             if "[MAIN]" in name:
@@ -61,27 +61,9 @@ class MemoryReader:
             if self._fail_counter == 3:
                 self._root.destroy_objects()
             return self.in_game
-    
-    def check_area_scan_in_game(self, name):
-        window_name = name
-        hWnd = win32gui.FindWindow(0, window_name)
-        pid = win32process.GetWindowThreadProcessId(hWnd)[1]
-        handle = Pymem()
-        handle.open_process_from_id(pid)
 
-        base_address = handle.process_base.lpBaseOfDll
-        ingame_address = base_address + 0x2301DA0
-        try:
-            in_game = self.read_memory(handle, ingame_address, "i")
-            if in_game:
-                return True
-            else:
-                return False
-        except:
-            self._console.log_message("Failed to read in game", 3)
-    
-    #  Function to continuously check and update the in-game status
     def check_in_game_status(self):
+        """Function to continuously check and update the in-game status"""
         reported_in_game = False
         while not self.stop_event.is_set():
             in_game = self.get_in_game_info()
@@ -97,9 +79,9 @@ class MemoryReader:
             self._game_tracker.update_time()
             self._overlay_gametime_obj.update_label()          
             time.sleep(1)
-    
-    # Function to get char name 
+     
     def get_charname_info(self):
+        """Function to get char name"""
         window_name = None
         for name in self._client_obj.window_names:
             if "[MAIN]" in name:
@@ -120,8 +102,8 @@ class MemoryReader:
             self._console.log_message(f"Failed to read char name", 3)
             return ""
 
-    # Function to get the game name
     def get_gamename_info(self):
+        """Function to get the game name"""
         window_name = None
         for name in self._client_obj.window_names:
             if "[MAIN]" in name:
@@ -142,8 +124,8 @@ class MemoryReader:
             self._console.log_message(f"Failed to read game name", 3)
             return ""
         
-    # Function to get the game password
     def get_password_info(self):
+        """Function to get the game password"""
         window_name = None
         for name in self._client_obj.window_names:
             if "[MAIN]" in name:
@@ -164,8 +146,8 @@ class MemoryReader:
             self._console.log_message(f"Failed to read password", 3)
             return ""
     
-    # Function to get load game status
     def load_game_info(self):
+        """Function to get load game status"""
         window_name = None
         for name in self._client_obj.window_names:
             window_name = name

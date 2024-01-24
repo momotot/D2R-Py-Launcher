@@ -22,8 +22,8 @@ class ImageReader():
         self.stop_event = threading.Event()
         self._overlay_pattern.run()
 
-    # function to parse the image at the specific coords (top right corner) for 1920x1080 and get the area
     def get_current_area(self):
+        """Function to parse the image at the specific coords (top right corner) for 1920x1080 and get the area"""
         tesseract_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
         if not os.path.exists(tesseract_path):
@@ -84,8 +84,8 @@ class ImageReader():
         else:
             return None
 
-    # function to keep scanning every second
     def continuously_scan_for_area(self):
+        """Function to keep scanning every second"""
         while not self.stop_event.is_set():
             current_area = self.get_current_area()
 
@@ -99,10 +99,10 @@ class ImageReader():
             self._overlay_pattern.update_label()
             time.sleep(1)
     
-    # function to stop scanning
     def stop_scan_for_area(self):
+        """Function to stop scanning"""
         self.stop_event.set()
 
-    # getter function for the area text
     def get_area_text(self):
+        """Getter function for the area text"""
         return self._area_text
