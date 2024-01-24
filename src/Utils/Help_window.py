@@ -17,20 +17,20 @@ class Help:
         self.center_help_window()
         self.help_window.protocol("WM_DELETE_WINDOW", lambda: self.close_help_window())
     
-    # The text that is displayed inside the help window
     def info_text(self):
+        """The text that is displayed inside the help window"""
         return "1. Choose D2R.exe path\n2. Enter how many clients you want to launch\n3. Press Launch button and wait until done\n\
 4. Go into game with your main char\n5. Leechers should have joined the game, otherwise if something failed you need to go into lobby -> any game\n6. Re-size for the next game to work properly\n\
 7. You can use legacy settings (recommended) via the Legacy button\n8. Press Next button to join your main char\n9. You can use the game time button to display in game time and game count\n\
 10. You can use the area button to have known patterns displayed\n11. Enjoy!"
 
-    # Close function of the help window
     def close_help_window(self):
+        """Close function of the help window"""
         self.console.log_message("Help window closed", 1)
         self.help_window.destroy()
 
-    # Centralizes the window upon launch
     def center_help_window(self):
+        """Centralizes the window upon launch"""
         screenWidth = self.help_window.winfo_screenwidth()
         screenHeight = self.help_window.winfo_screenheight()
         x_coordinate = (screenWidth - self.help_window.winfo_reqwidth()) // 2
