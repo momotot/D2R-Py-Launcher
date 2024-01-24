@@ -1,6 +1,6 @@
 # D2R-Py-Launcher 1.1.0
 
-![D2R-Py-Launcher](https://i.imgur.com/toj1J0J.png)
+![D2R-Py-Launcher](https://i.imgur.com/zzOi7je.png)
 ![D2R-Py-Launcher](https://i.imgur.com/VwPE3nB.png)
 
 ## Table of Contents
@@ -51,6 +51,7 @@ The author disclaims any liability for any consequences arising from the us or m
   - [numpy](https://pypi.org/project/numpy/)
   - [pymem](https://pypi.org/project/Pymem/)
   - [fuzzywuzzy](https://pypi.org/project/fuzzywuzzy/)
+  - [requests](https://pypi.org/project/requests/)
   - Install via ```pip install -r requirements.txt``` 
 - **Handle 64**
   - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`

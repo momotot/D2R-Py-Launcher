@@ -6,3 +6,4 @@ opencv-python
 numpy
 pymem
 fuzzywuzzy
+requests
