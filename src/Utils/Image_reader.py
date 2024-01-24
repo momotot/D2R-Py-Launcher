@@ -17,7 +17,7 @@ class ImageReader():
         self._console = console
         self._overlay_pattern = overlay_pattern
         self._area_text = "None"
-        self._console.log_message("Game scanner instance created", 1)
+        self._console.log_message("Image reader instance created", 1)
         self._window = pygetwindow.getWindowsWithTitle(window_name)[0]
         self.stop_event = threading.Event()
         self._overlay_pattern.run()
@@ -31,9 +31,15 @@ class ImageReader():
             return
         
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
-        x, y, w, h = self._window.left + 1650, self._window.top + 71, 250, 30 
-        roi = pyautogui.screenshot(region=(x, y, w, h))
-        #roi.save("debug_prints/screenshot_debug.png") # enable if you want to debug
+
+        try:
+            x, y, w, h = self._window.left + 1650, self._window.top + 71, 250, 30 
+            roi = pyautogui.screenshot(region=(x, y, w, h))
+            #roi.save("debug_prints/screenshot_debug.png") # enable if you want to debug
+        except pygetwindow.PyGetWindowException as e:
+            self._console.log_message(f"Image reader object destroyed", 1)
+            self.stop_scan_for_area()
+            return
 
         gray_roi = cv2.cvtColor(np.array(roi), cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray_roi, 120, 255, cv2.THRESH_BINARY)

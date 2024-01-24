@@ -36,7 +36,7 @@ class OverlayPatternInfo:
     
     # creates the label to display the info
     def create_label(self):
-        self.label = tk.Label(self._root, text="Not in game", fg="red", font=("Helvetica", 10, "bold"))
+        self.label = tk.Label(self._root, text="Loading", fg="red", font=("Helvetica", 10, "bold"))
         self.label.pack(side="top", fill="both", expand=True, padx=5, pady=30)
 
     # function to destroy the label
@@ -90,6 +90,7 @@ class OverlayPatternInfo:
     # function to stop the process checking thread
     def stop_check_process(self):
         self.stop_event.set()
+        self._image_scanner = None
         self.thread.join()
         self.queue.get()
 

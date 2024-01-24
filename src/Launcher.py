@@ -1,7 +1,8 @@
 import os
+import sys
 import Client_launcher
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import threading
 import Utils.Reader as Reader
 import Utils.Gametime as Gametime
@@ -18,8 +19,8 @@ class Launcher:
         self._client_obj = None
         self._reader = None
         self._overlay_gametime_obj = None
+        self._overlay_pattern_info = None
         self.game_tracker = None
-        self._image_scanner = None
         self.image_bool = False
 
         self.initiate_app()
@@ -99,6 +100,7 @@ class Launcher:
         self._root.config(menu=self._menubar)
         self._file_menu = tk.Menu(self._menubar, tearoff=0)
         self._menubar.add_cascade(label="File", menu=self._file_menu)
+        self._file_menu.add_command(label="Restart", command=self.restart_app)
         self._file_menu.add_command(label="Help", command=self.show_help)
         self._file_menu.add_command(label="Exit", command=self.exit_app)
 
@@ -119,6 +121,14 @@ class Launcher:
     def initiate_game_tracker(self):
         self.game_tracker = Gametime.GameTimeTracker()
         self.console.log_message("Game tracker created", 1)
+        
+    def restart_app(self):
+        user_response = messagebox.askquestion("Restart", "Are you sure you want to restart?")
+
+        if user_response == "yes":
+            python = sys.executable
+            os.execl(python, python, *sys.argv)
+
     
     # Initializing the help object
     def show_help(self):
@@ -134,7 +144,7 @@ class Launcher:
 
     # Exits the app
     def exit_app(self):
-        self.root.destroy()
+        self._root.destroy()
 
     # Function the runs when client object is created and the Terminate button is pressed 
     def exit_diablo(self):
@@ -235,7 +245,7 @@ class Launcher:
 
     def area_func(self):
         if self.client_check:
-            if self._image_scanner is None and not self.image_bool:
+            if self._overlay_pattern_info is None and not self.image_bool:
                 for name, _ in self._client_obj.process_info.items():
                     if "[MAIN]" in name:
                         choosen_name = name
@@ -243,18 +253,26 @@ class Launcher:
                         self.image_bool = True
                         self._overlay_pattern_info = Overlay_pattern.OverlayPatternInfo(self._root, self.console, self._client_obj, self.game_tracker, choosen_name)
                         break
+                else:
+                    self.console.log_message("Main char not loaded", 2)
             else:
-                self.console.log_message("Image scanner already loaded", 2)
+                self.console.log_message("Overlay already initiated", 2)
         else:
             self.console.log_message("You must launch the game first", 3)              
 
     # removing the reader and overlay object and resets
     def destroy_objects(self):
-        self._reader.stop_event.set()
-        self._overlay_gametime_obj.remove_label()
-        self._reader = None
-        self._overlay_gametime_obj = None
-        self.console.log_message("Destroyed overlay and reader object", 1)
+        if self._overlay_pattern_info is not None:
+            self._overlay_pattern_info.remove_label()
+            self._overlay_pattern_info = None
+            self.image_bool = False
+        if self._reader is not None:
+            self._reader.stop_event.set()
+            self._reader = None
+        if self._overlay_gametime_obj is not None:
+            self._overlay_gametime_obj.remove_label()
+            self._overlay_gametime_obj = None
+        self.console.log_message("Destroyed overlay and reader objects", 1)
 
 # MAIN LOOP
 if __name__ == "__main__":
