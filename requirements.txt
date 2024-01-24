@@ -1,0 +1,4 @@
+pyautogui==latest_version
+PyGetWindow==latest_version
+psutil==latest_version
+pywin32==latest_version

@@ -43,13 +43,14 @@ The author disclaims any liability for any consequences arising from the us or m
 
 - **Python Version:** Python 3.6 or later
 - **External Modules:**
-  - [pyautogui](https://pypi.org/project/PyAutoGUI/): `pip install pyautogui`
-  - [PyGetWindow](https://pypi.org/project/PyGetWindow/): `pip install PyGetWindow`
-  - [psutil](https://pypi.org/project/psutil/): `pip install psutil`
-  - [pywin32](https://pypi.org/project/pywin32/): `pip install pywin32`
-- **Handle 64:**
+  - [pyautogui](https://pypi.org/project/PyAutoGUI/)
+  - [PyGetWindow](https://pypi.org/project/PyGetWindow/)
+  - [psutil](https://pypi.org/project/psutil/)
+  - [pywin32](https://pypi.org/project/pywin32/)
+  - Install via ```pip install -r requirements.txt``` 
+- **Handle 64**
   - [Handle 64](https://learn.microsoft.com/en-us/sysinternals/downloads/handle): `Download it from microsoft`
-- **Tesseract OCR:**
+- **Tesseract OCR**
   - [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki)`Download it from the site linked`
 
 
