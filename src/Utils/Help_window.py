@@ -20,8 +20,9 @@ class Help:
     # The text that is displayed inside the help window
     def info_text(self):
         return "1. Choose D2R.exe path\n2. Enter how many clients you want to launch\n3. Press Launch button and wait until done\n\
-4. Go into game with your main char\n5. Go to the lobby with leechers and join a random game\n6. Re-size for the next game to work properly\n\
-7. You can use legacy settings (recommended) via the Legacy button\n8. Press Next button to join your main char\n9. Enjoy!"
+4. Go into game with your main char\n5. Leechers should have joined the game, otherwise if something failed you need to go into lobby -> any game\n6. Re-size for the next game to work properly\n\
+7. You can use legacy settings (recommended) via the Legacy button\n8. Press Next button to join your main char\n9. You can use the game time button to display in game time and game count\n\
+10. You can use the area button to have known patterns displayed\n11. Enjoy!"
 
     # Close function of the help window
     def close_help_window(self):
@@ -34,4 +35,4 @@ class Help:
         screenHeight = self.help_window.winfo_screenheight()
         x_coordinate = (screenWidth - self.help_window.winfo_reqwidth()) // 2
         y_coordinate = (screenHeight - self.help_window.winfo_reqheight()) // 2
-        self.help_window.geometry(f"{400}x{400}+{x_coordinate}+{y_coordinate}")
+        self.help_window.geometry(f"{400}x{600}+{x_coordinate}+{y_coordinate}")
