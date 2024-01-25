@@ -16,6 +16,7 @@ import threading
 import cv2
 import numpy as np
 from pathlib import Path
+import random
 
 class Client:   
     def __init__ (self, root, clients, folder_path, path, console):
@@ -99,17 +100,18 @@ class Client:
             count = 0
             while not self.is_start_image_present():
                 pyautogui.press("space")
-                time.sleep(0.2)
+                time.sleep(0.1)
+                pyautogui.press("space")
                 count += 1
                 self.resize_window_start()
-                if count == 25:
+                if count == 30:
                     break
             self._console.log_message(f"{name} at start screen", 1)
             self.change_window_title()
             self.enter_lobby(name)
         self.focus_main_window()
 
-    def terminate_handle(self,name, pid):
+    def terminate_handle(self, name, pid):
         """Find the handle and terminate it to be able to run several d2r's"""
         self._console.log_message(f"Closing handle for {name}, PID: {pid}", 1)
         handle64_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'handle64.exe')
@@ -194,50 +196,89 @@ class Client:
                     continue
                 position = self.get_window_position(name)
                 self.get_window_front(name)
-                if position:
-                    # coordinates are on 1920x1080 windows
-                    if not self.legacy: # positions for non-legacy
+                current_location = self.check_if_lobby(name)
+                if current_location == "start": # is at start screen
+                    if position:
+                        pyautogui.moveTo(position[0]+755, position[1]+683)
+                        pyautogui.click(x=position[0]+755, y=position[1]+683) # press enter lobby
                         time.sleep(sleep_delay)
-                        pyautogui.press("esc")
+                        pyautogui.moveTo(position[0]+130, position[1]+546)
+                        pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
                         time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+644, position[1]+353)
-                        pyautogui.click(x=position[0]+644, y=position[1]+353) # coord for left click on exit menu
+                        pyautogui.moveTo(position[0]+206, position[1]+140)
+                        pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
                         time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+258, position[1]+540)
-                        pyautogui.click(x=position[0]+258, y=position[1]+540) # coord for left click on friend list symbol
+                        pyautogui.moveTo(position[0]+204, position[1]+166)
+                        pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
                         time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+355, position[1]+128)
-                        pyautogui.click(x=position[0]+355, y=position[1]+128) # coord for left click on friend list bar
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+350, position[1]+159)
-                        pyautogui.rightClick(x=position[0]+350, y=position[1]+159) # coord for right click on the friend
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+430, position[1]+271)
-                        pyautogui.click(x=position[0]+430, y=position[1]+271) # coord for left click on join game
+                        pyautogui.moveTo(position[0]+336, position[1]+276)
+                        pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
                         time.sleep(sleep_delay)
                         self._console.log_message(f"{name} joined a new game", 1)
-                    else: # positions for legacy
-                        time.sleep(sleep_delay)
-                        pyautogui.press("esc")
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+386, position[1]+279)
-                        pyautogui.click(x=position[0]+386, y=position[1]+279) # coord for left click on exit menu
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+258, position[1]+540)
-                        pyautogui.click(x=position[0]+258, y=position[1]+540) # coord for left click on friend list symbol
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+355, position[1]+128)
-                        pyautogui.click(x=position[0]+355, y=position[1]+128) # coord for left click on friend list bar
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+350, position[1]+159)
-                        pyautogui.rightClick(x=position[0]+350, y=position[1]+159) # coord for right click on the friend
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+430, position[1]+271)
-                        pyautogui.click(x=position[0]+430, y=position[1]+271) # coord for left click on join game
-                        time.sleep(sleep_delay)
-                        self._console.log_message(f"{name} joined a new game", 1)
+                    else:
+                        self._console.log_message("No valid window position", 3)  
+                elif current_location == "lobby": # is in lobby
+                        if position:
+                            pyautogui.moveTo(position[0]+130, position[1]+546)
+                            pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+206, position[1]+140)
+                            pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+204, position[1]+166)
+                            pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+336, position[1]+276)
+                            pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
+                            time.sleep(sleep_delay)
+                            self._console.log_message(f"{name} joined a new game", 1)
+                        else:
+                            self._console.log_message("No valid window position", 3)  
                 else:
-                    self._console.log_message("No valid window position", 3)      
+                    if position:
+                        # coordinates are on 1280x720 windows
+                        if not self.legacy: # positions for non-legacy
+                            time.sleep(sleep_delay)
+                            pyautogui.press("esc")
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+645, position[1]+357)
+                            pyautogui.click(x=position[0]+645, y=position[1]+357) # coord for left click on exit menu
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+130, position[1]+546)
+                            pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+206, position[1]+140)
+                            pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+204, position[1]+166)
+                            pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+336, position[1]+276)
+                            pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
+                            time.sleep(sleep_delay)
+                            self._console.log_message(f"{name} joined a new game", 1)
+                        else: # positions for legacy
+                            time.sleep(sleep_delay)
+                            pyautogui.press("esc")
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+615, position[1]+325)
+                            pyautogui.click(x=position[0]+615, y=position[1]+325) # coord for left click on exit menu
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+130, position[1]+546)
+                            pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+206, position[1]+140)
+                            pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+204, position[1]+166)
+                            pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
+                            time.sleep(sleep_delay)
+                            pyautogui.moveTo(position[0]+336, position[1]+276)
+                            pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
+                            time.sleep(sleep_delay)
+                            self._console.log_message(f"{name} joined a new game", 1)
+                    else:
+                        self._console.log_message("No valid window position", 3)      
             self.legacy = False
             
             for name in self.window_names:
@@ -261,12 +302,21 @@ class Client:
                 continue
             try:
                 position = self.get_window_position(name)
+
+                coordinates_dict = {
+                    "1": (870,300),
+                    "2": (591,490),
+                    "3": (669,255),
+                    "4": (290,304)
+                    }
+
+                random_coordinate = random.choice(list(coordinates_dict.values()))
                 self.get_window_front(name)
                 time.sleep(0.1)
                 pyautogui.press("'") # Make sure this key is your key to change graphics
                 time.sleep(0.1)
-                pyautogui.moveTo(position[0]+534, position[1]+392)
-                pyautogui.click(x=position[0]+534, y=position[1]+392) # coord for left click on exit menu
+                pyautogui.moveTo(position[0]+random_coordinate[0], position[1]+random_coordinate[1])
+                pyautogui.click(x=position[0]+random_coordinate[0], y=position[1]+random_coordinate[1]) # coord for left click on exit menu
                 time.sleep(0.1)
                 self._console.log_message(f"Changed {name} to legacy graphic", 1)
             except:
@@ -294,12 +344,11 @@ class Client:
             status = False
             window = pygetwindow.getWindowsWithTitle("Diablo II: Resurrected")[0]
             current_width, current_height = window.size
-            if current_width != 1920 or current_height != 1080 and not status:
-                self._console.log_message("Re-sized to 1920x1080 in optional", 1)
-                window.resizeTo(1920,1080)
+            if current_width != 1280 or current_height != 720 and not status:
+                window.resizeTo(1280,720)
                 status = True
         except:
-            self._console.log_message(f"Failed to re-size window optional", 3)
+            self._console.log_message(f"Failed to re-size window", 3)
 
     def resize_window_game(self):
         """Re-sizes all "joiners" when they are in-game by pressing the "Legacy" button"""
@@ -312,9 +361,9 @@ class Client:
                 if not "MAIN" in name:
                     window = pygetwindow.getWindowsWithTitle(name)[0]
                     current_width, current_height = window.size
-                    if current_width != 800 or current_height != 600:
-                        window.resizeTo(800,600)
-                        self._console.log_message(f"Re-sized {name} to 800x600", 1)
+                    if current_width != 1280 or current_height != 720:
+                        window.resizeTo(1280,720)
+                        self._console.log_message(f"Re-sized {name} to 1280x720", 1)
                 elif "MAIN" in name:
                     window = pygetwindow.getWindowsWithTitle(name)[0]
                     current_width, current_height = window.size
@@ -418,14 +467,9 @@ class Client:
         if "[MAIN]" in name:
             return
         position = self.get_window_position(name)
-        pyautogui.moveTo(position[0]+1104, position[1]+975)
-        pyautogui.click(x=position[0]+1104, y=position[1]+975) # press enter lobby
-        time.sleep(0.1)
-        pyautogui.moveTo(position[0]+1227, position[1]+289)
-        pyautogui.click(x=position[0]+1227, y=position[1]+289) # press first game
-        pyautogui.click(x=position[0]+1227, y=position[1]+289) 
-        pyautogui.click(x=position[0]+1227, y=position[1]+289) 
-        self._console.log_message(f"{name} in game", 1)
+        pyautogui.moveTo(position[0]+755, position[1]+683)
+        pyautogui.click(x=position[0]+755, y=position[1]+683) # press enter lobby
+        self._console.log_message(f"{name} in lobby", 1)
 
     def is_start_image_present(self):
         """Function to read the image at start screen"""
@@ -437,7 +481,7 @@ class Client:
         target_image_two = cv2.imread(str(target_image_path_two))
 
         window = pygetwindow.getWindowsWithTitle(window_name)[0]
-        x, y, w, h = window.left, window.top, 1920, 1080
+        x, y, w, h = window.left, window.top, 1280, 720
         roi = pyautogui.screenshot(region=(x, y, w, h))
         #roi.save("loading_debug.png")
 
@@ -455,3 +499,39 @@ class Client:
             return True
         
         return False
+    
+    def check_if_lobby(self, name):
+        """Function to check if its in game, in start screen or lobby"""
+        self.get_window_front(name)
+        time.sleep(0.1)
+        start_screen_path = Path(__file__).parent / "Pictures" / "Start.png"
+        start_screen_path_two = Path(__file__).parent / "Pictures" / "Start2.png"
+        lobby_path = Path(__file__).parent / "Pictures" / "lobby.png"
+
+        start_image = cv2.imread(str(start_screen_path))
+        start_image_two = cv2.imread(str(start_screen_path_two))
+        lobby_image = cv2.imread(str(lobby_path))
+
+        window = pygetwindow.getWindowsWithTitle(name)[0]
+        x, y, w, h = window.left, window.top, 1280, 720
+        roi = pyautogui.screenshot(region=(x,y, w, h))
+
+        screenshot = np.array(roi)
+        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
+
+        result_start = cv2.matchTemplate(screenshot, start_image, cv2.TM_CCOEFF_NORMED)
+        result_start_two = cv2.matchTemplate(screenshot,start_image_two, cv2.TM_CCOEFF_NORMED)
+        result_lobby = cv2.matchTemplate(screenshot, lobby_image, cv2.TM_CCOEFF_NORMED)
+
+        threshold_start = 0.7
+        threshold_lobby = 0.7
+        loc_start = np.where(result_start >= threshold_start)
+        loc_start_two = np.where(result_start_two >= threshold_start)
+        loc_lobby = np.where(result_lobby >= threshold_lobby)
+        
+        if len(loc_start[0]) > 0 or len(loc_start_two[0] > 0):
+            return "start"
+        elif len(loc_lobby[0]) > 0:
+            return "lobby"
+        else:
+            return ""
