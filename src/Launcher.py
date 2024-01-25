@@ -17,6 +17,7 @@ class Launcher:
     def __init__(self, root):
         self._root = root
         self.client_check = False
+        self._console = None
         self._client_obj = None
         self._reader = None
         self._overlay_gametime_obj = None
@@ -134,27 +135,27 @@ class Launcher:
 
     def toggle_console(self):
         """Function to show/hide the console window - will never stop running while app is running"""
-        if self.console._console.state() == "withdrawn":
-            self.console.show_console()
-            self.console.log_message("Displaying console window", 1)
+        if self._console._console.state() == "withdrawn":
+            self._console.show_console()
+            self._console.log_message("Displaying console window", 1)
         else:
-            self.console.hide_console()
-            self.console.log_message("Hiding console window", 1)
+            self._console.hide_console()
+            self._console.log_message("Hiding console window", 1)
 
     def initiate_console(self):
         """Initializing the console object"""
-        self.console = Console.Console(self._root)
-        self.console.log_message("Console window created", 1)
+        self._console = Console.Console(self._root)
+        self._console.log_message("Console window created", 1)
 
     def initiate_terror_zone(self):
         """Initializing the terror zone tracker object"""
-        self._terror_zone_obj = Terror_zone.TerrorZones(self._root, self, self.console)
-        self.console.log_message("Terror zone object created", 1)
+        self._terror_zone_obj = Terror_zone.TerrorZones(self._root, self, self._console)
+        self._console.log_message("Terror zone object created", 1)
     
     def initiate_game_tracker(self):
         """Initializing the game time tracker object"""
         self.game_tracker = Gametime.GameTimeTracker()
-        self.console.log_message("Game tracker created", 1)
+        self._console.log_message("Game tracker created", 1)
     
     def update_terror_zone_label(self, zone_list):
         """Updates the terror zone label"""
@@ -177,15 +178,15 @@ class Launcher:
 
     def show_help(self):
         """Initializing the help object"""
-        self.help_window = Help_window.Help(self._root, self.console)
-        self.console.log_message("Help window launched", 1)
+        self.help_window = Help_window.Help(self._root, self._console)
+        self._console.log_message("Help window launched", 1)
     
     def remove_reader(self):
         """Calling the removal of reader and overlay objects"""
         if self._reader:
             self.destroy_objects()
         else:
-            self.console.log_message("No reader object exists", 3)
+            self._console.log_message("No reader object exists", 3)
 
     def exit_app(self):
         """Exits the app"""
@@ -195,38 +196,38 @@ class Launcher:
         """Function the runs when client object is created and the Terminate button is pressed"""
         if self.client_check:
             if len(self._client_obj.window_names) == 0:
-                self.console.log_message("No window(s) opened", 2)
+                self._console.log_message("No window(s) opened", 2)
                 return
             else:
                 self._client_obj.checkbox()
         else:
-            self.console.log_message("You must launch the game first", 3)
+            self._console.log_message("You must launch the game first", 3)
 
     def legacy_settings(self):
         """Calls the change to legacy settings when the Legacy button is pressed"""
         if self.client_check:
             self._client_obj.change_to_legacy()
         else:
-            self.console.log_message("You must launch the game first", 3)
+            self._console.log_message("You must launch the game first", 3)
 
     def resize(self):
         """Calls re-size of the windows when the re-size button is pressed"""
         if self.client_check:
             self._client_obj.resize_window_game()
         else:
-            self.console.log_message("You must launch the game first", 3)
+            self._console.log_message("You must launch the game first", 3)
 
     def process_clients(self):
         """When the Launch D2R button is pressed it will create the client object if not already existing"""
         if self.client_amount == "" or not "D2R" in self.path.get():
-            self.console.log_message("Invalid path for D2R", 2)
+            self._console.log_message("Invalid path for D2R", 2)
             return  
         entered_value = self.client_amount.get()
         try:
             clients = int(entered_value)
             if 0 < clients < 9:
                 try:
-                    self.console.log_message(f"Launching {clients} client", 1)
+                    self._console.log_message(f"Launching {clients} client", 1)
                     if self._client_obj is not None:
                         self._client_obj.clients = self.client_amount.get()
                         self._client_obj.parse_config_and_launch()
@@ -237,31 +238,31 @@ class Launcher:
                     if self._client_obj is not None:
                         self.client_check = True
                 except:
-                    self.console.log_message("Failed to launch client", 3)
+                    self._console.log_message("Failed to launch client", 3)
             else:
-                self.console.log_message("Only 1-8 clients allowed", 2)
+                self._console.log_message("Only 1-8 clients allowed", 2)
         except ValueError:
-            self.console.log_message(f"Value error input", 3)
+            self._console.log_message(f"Value error input", 3)
         except:
-            self.console.log_message("Other error input", 3)
+            self._console.log_message("Other error input", 3)
     
     def update_path(self):
         """Function to browse the D2R.exe when the Browse button is pressed"""
-        self.console.log_message("Browsing D2R path", 1)
+        self._console.log_message("Browsing D2R path", 1)
         path = filedialog.askopenfilename(title="Select D2R.exe")
         if path.lower().endswith("d2r.exe"):
             self.displayed_path.set("Valid D2R Path")
             self._displayed_path_label.config(fg="green")
-            self.console.log_message("Valid D2R path set", 1)
+            self._console.log_message("Valid D2R path set", 1)
         else:
             if path == "":
                 self.displayed_path.set("Choose a valid path")
                 self._displayed_path_label.config(fg="yellow")
-                self.console.log_message("Empty D2R path choice", 2)
+                self._console.log_message("Empty D2R path choice", 2)
             else:
                 self.displayed_path.set("Invalid D2R path")
                 self._displayed_path_label.config(fg="red")
-                self.console.log_message("Invalid D2R path", 2)
+                self._console.log_message("Invalid D2R path", 2)
         self.path.set(path)
     
     def join_game(self):
@@ -269,7 +270,7 @@ class Launcher:
         if self.client_check:
             self._client_obj.join_game()
         else:
-            self.console.log_message("You must launch the game first", 3)
+            self._console.log_message("You must launch the game first", 3)
     
     def read_stats(self):
         """When game time is pressed the function creates the overlay and initialize the reader object"""
@@ -277,16 +278,16 @@ class Launcher:
             if self._reader is None:
                 for name, _ in self._client_obj.process_info.items():
                     if "[MAIN]" in name:
-                        self._overlay_gametime_obj = Overlay_gametime.OverlayGameTime(self._root, self.console, self._client_obj, self.game_tracker)
-                        self._reader = Reader.MemoryReader(self, self.console, self._client_obj, self.game_tracker, self._overlay_gametime_obj)
+                        self._overlay_gametime_obj = Overlay_gametime.OverlayGameTime(self._root, self._console, self._client_obj, self.game_tracker)
+                        self._reader = Reader.MemoryReader(self, self._console, self._client_obj, self.game_tracker, self._overlay_gametime_obj)
                         self._reader.check_in_game_status()
                         break
                 else:
-                    self.console.log_message("Main char not loaded", 2)
+                    self._console.log_message("Main char not loaded", 2)
             else:
-                self.console.log_message("Reader already initiated", 2)
+                self._console.log_message("Reader already initiated", 2)
         else:
-            self.console.log_message("You must launch the game first", 3)
+            self._console.log_message("You must launch the game first", 3)
 
     def area_func(self):
         """Initialization of the overlay and image tracker objects (image inside of overlay class)"""
@@ -295,16 +296,16 @@ class Launcher:
                 for name, _ in self._client_obj.process_info.items():
                     if "[MAIN]" in name:
                         choosen_name = name
-                        self.console.log_message(f"Scanning game for {choosen_name}", 1)
+                        self._console.log_message(f"Scanning game for {choosen_name}", 1)
                         self.image_bool = True
-                        self._overlay_pattern_info = Overlay_pattern.OverlayPatternInfo(self._root, self.console, self._client_obj, self.game_tracker, choosen_name)
+                        self._overlay_pattern_info = Overlay_pattern.OverlayPatternInfo(self._root, self._console, self._client_obj, self.game_tracker, choosen_name)
                         break
                 else:
-                    self.console.log_message("Main char not loaded", 2)
+                    self._console.log_message("Main char not loaded", 2)
             else:
-                self.console.log_message("Overlay already initiated", 2)
+                self._console.log_message("Overlay already initiated", 2)
         else:
-            self.console.log_message("You must launch the game first", 3)              
+            self._console.log_message("You must launch the game first", 3)              
 
     def destroy_objects(self):
         """Removing the reader and overlay object and resets"""
@@ -318,7 +319,7 @@ class Launcher:
         if self._overlay_gametime_obj is not None:
             self._overlay_gametime_obj.remove_label()
             self._overlay_gametime_obj = None
-        self.console.log_message("Destroyed overlay and reader objects", 1)
+        self._console.log_message("Destroyed overlay and reader objects", 1)
 
 if __name__ == "__main__":
     """THE MAIN LOOP"""
