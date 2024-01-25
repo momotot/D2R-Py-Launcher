@@ -101,12 +101,13 @@ class Client:
                 pyautogui.press("space")
                 time.sleep(0.2)
                 count += 1
+                self.resize_window_start()
                 if count == 25:
                     break
             self._console.log_message(f"{name} at start screen", 1)
             self.change_window_title()
             self.enter_lobby(name)
-        self.resize_window_start() 
+        self.focus_main_window()
 
     def terminate_handle(self,name, pid):
         """Find the handle and terminate it to be able to run several d2r's"""
@@ -276,25 +277,29 @@ class Client:
             if "MAIN" in name:
                 self.get_window_front(name)
                 break
-    
-    def resize_window_start(self):
-        """Re-sizes all windows to 1920x1080 currently to be able to go into games"""
+
+    def focus_main_window(self):
+        """Focus the main window"""
         try:
-            self._console.log_message("Attempting to re-size window(s)", 1)
-            for name in self.window_names:
-                window = pygetwindow.getWindowsWithTitle(name)[0]
-                current_width, current_height = window.size
-                if current_width != 1920 or current_height != 1080:
-                    window.resizeTo(1920,1080)
-                    self._console.log_message(f"Re-sized {name} to 1920x1080", 1)
-                    
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)
                     break
-
         except:
-            self._console.log_message(f"Failed to re-size {name} on launch", 2)
+            self._console.log_message(f"Failed to focus {name}", 2)
+
+    def resize_window_start(self):
+        """Used to re-size the window at start if its not 1920x1080"""
+        try:
+            status = False
+            window = pygetwindow.getWindowsWithTitle("Diablo II: Resurrected")[0]
+            current_width, current_height = window.size
+            if current_width != 1920 or current_height != 1080 and not status:
+                self._console.log_message("Re-sized to 1920x1080 in optional", 1)
+                window.resizeTo(1920,1080)
+                status = True
+        except:
+            self._console.log_message(f"Failed to re-size window optional", 3)
 
     def resize_window_game(self):
         """Re-sizes all "joiners" when they are in-game by pressing the "Legacy" button"""
@@ -315,7 +320,7 @@ class Client:
                     current_width, current_height = window.size
                     if current_width != 1920 or current_height != 1080:
                         window.resizeTo(1920,1080)
-                        self._console.log_message(f"Re-sized {name} to 1080", 1)
+                        self._console.log_message(f"Re-sized {name} to 1920x1080", 1)
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)

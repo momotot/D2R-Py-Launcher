@@ -233,7 +233,7 @@ class Launcher:
                         self._client_obj.parse_config_and_launch()
                         self._client_obj.change_window_title()
                     else:
-                        self._client_obj = Client_launcher.Client(self._root, self.client_amount.get(), self._folder_path, self.path.get(), self.console)
+                        self._client_obj = Client_launcher.Client(self._root, self.client_amount.get(), self._folder_path, self.path.get(), self._console)
                         self.client_amount.set("")
                     if self._client_obj is not None:
                         self.client_check = True

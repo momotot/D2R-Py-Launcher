@@ -36,7 +36,7 @@ class OverlayPatternInfo:
     
     def create_label(self):
         """Creates the label to display the info"""
-        self.label = tk.Label(self._root, text="Loading", fg="red", font=("Helvetica", 10, "bold"))
+        self.label = tk.Label(self._root, text="Loading", fg="red", font=("Helvetica", 8))
         self.label.pack(side="top", fill="both", expand=True, padx=5, pady=30)
 
     def remove_label(self):
