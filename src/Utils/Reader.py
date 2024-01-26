@@ -1,4 +1,3 @@
-#import win32api
 import win32gui
 import win32process
 import time
@@ -7,7 +6,10 @@ from ctypes import *
 from pymem import *
 
 class MemoryReader:
+    current_instance = None
+
     def __init__(self, root, console, client_obj, game_tracker, overlay):
+        MemoryReader.current_instance = self
         self._root = root
         self._console = console
         self._client_obj = client_obj
@@ -167,3 +169,8 @@ class MemoryReader:
                     self._client_obj.change_to_legacy()
             except:
                 self._console.log_message(f"Failed to read load game info", 3)
+
+    @staticmethod
+    def return_current_object():
+        """Static method to return the current instance of the class"""
+        return MemoryReader.current_instance

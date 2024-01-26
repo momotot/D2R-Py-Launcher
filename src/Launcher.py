@@ -4,6 +4,7 @@ import Client_launcher
 import tkinter as tk
 from tkinter import filedialog, messagebox, font
 import threading
+
 import Utils.Reader as Reader
 import Utils.Gametime as Gametime
 import Utils.Console as Console
@@ -23,6 +24,7 @@ class Launcher:
         self._overlay_gametime_obj = None
         self._overlay_pattern_info = None
         self._terror_zone_obj = None
+        self._settings_window = None
         self.game_tracker = None
         self.image_bool = False
 
@@ -266,9 +268,15 @@ class Launcher:
         self.path.set(path)
     
     def join_game(self):
-        """When next game button is pressed this function gets executed if there is an active client object"""
+        """When the next game button is pressed, this function gets executed if there is an active client object. Uses packet reading and types gamename/pw or friend list clicks depending on settings"""
         if self.client_check:
-            self._client_obj.join_game()
+            current_settings = self._settings_window.get_settings() if self._settings_window else {}
+            if current_settings.get("Friend join option", False):
+                self._client_obj.join_game_friends()
+            elif current_settings.get("Next game join option", False):
+                self._client_obj.join_game_reader()
+            else:
+                self._client_obj.join_game_friends()
         else:
             self._console.log_message("You must launch the game first", 3)
     
@@ -320,6 +328,14 @@ class Launcher:
             self._overlay_gametime_obj.remove_label()
             self._overlay_gametime_obj = None
         self._console.log_message("Destroyed overlay and reader objects", 1)
+    
+    def set_settings(self, settings):
+        """Setter function for settings"""
+        self._settings = settings
+    
+    def get_settings(self):
+        """Getter function for settings"""
+        return self._settings if hasattr(self, '_settings') else None
 
 if __name__ == "__main__":
     """THE MAIN LOOP"""
