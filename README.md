@@ -32,7 +32,7 @@ The author disclaims any liability for any consequences arising from the us or m
 ## Features
 
 - Launch multiple D2R clients.
-- Automatic joining for leechers to your main characters game.
+- Automatic joining for leechers to your main characters game. Two seperate methods to choose from.
 - Console log for monitoring.
 - Termination of specific processes through the GUI.
 - Legacy settings option.
@@ -95,12 +95,13 @@ The author disclaims any liability for any consequences arising from the us or m
 
 8. **Joining games**
    ```bash
-   In order to make the joining of next game to work there are some prerequisite:
-   - All "leechers/joiners" must have entered lobby and joined a game from there
+   After update its not possible to be in lobby, in start screen or in game when pressing next game.
+   The only requirement is that the resolution of the joiners are 1280x720 for the pixel clicks to work.
+   You can choose in the settings tab what method you prefer.
+   If you have friend list join:
    - Joining is through friend list so the main char must be the only added account to the leechers friend list
-   - The main character must be online (green status) on battle.net
+   - The main character must be online (green status) on battle.net - this can sometimes be buggy!
    - You can be in either d2r or legacy graphic mode, both will work
-   - Currently it will only work when you have re-sized with the re-size button
 
 ## Troubleshooting
 
