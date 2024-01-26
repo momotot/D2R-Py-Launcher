@@ -3,15 +3,10 @@ from tkinter import ttk
 import threading
 
 class SettingsWindow:
-
     __settings_dict = {
-    "Toggle console option": True,
-    "Next game join option": True,
-    "Legacy toggle option": True,
-    "Re-size option": True,
-    "Terminate PID option": True,
-    "Display game time option": True,
-    "Pattern info from area option": True}  
+    "Friend join option": True,
+    "Next game join option": False
+}  
     
     def __init__(self, root):
         self._root = root
@@ -33,72 +28,87 @@ class SettingsWindow:
 
     def create_widgets(self):
         """ Creates all checkboxes and buttons"""
-        self.__toggle_console_var = tk.BooleanVar(value=self.__settings_dict["Toggle console option"])
-        self._toggle_console_checkbox = ttk.Checkbutton(self._settings_window, text="Toggle console option", variable=self.__toggle_console_var)
-        self._toggle_console_checkbox.pack()
+        self.__friends_join_var = tk.BooleanVar(value=self.__settings_dict["Friend join option"])
+        self._friend_join_checkbox = ttk.Checkbutton(self._settings_window, text="Friend list join", variable=self.__friends_join_var, command=self.disable_game_join)
+        self._friend_join_checkbox.pack()
 
         self.__join_next_game_var = tk.BooleanVar(value=self.__settings_dict["Next game join option"])
-        self._join_next_game_checkbox = ttk.Checkbutton(self._settings_window, text="Next game join option", variable=self.__join_next_game_var)
+        self._join_next_game_checkbox = ttk.Checkbutton(self._settings_window, text="Next game lobby",variable=self.__join_next_game_var, command=self.disable_friend_join)
         self._join_next_game_checkbox.pack()
-
-        self.__legacy_switch_var = tk.BooleanVar(value=self.__settings_dict["Legacy toggle option"])
-        self._legacy_switch_checkbox = ttk.Checkbutton(self._settings_window, text="Legacy toggle option", variable=self.__legacy_switch_var)
-        self._legacy_switch_checkbox.pack()
-
-        self.__resize_var = tk.BooleanVar(value=self.__settings_dict["Re-size option"])
-        self._resize_checkbox = ttk.Checkbutton(self._settings_window, text="Re-size option", variable=self.__resize_var)
-        self._resize_checkbox.pack()
-
-        self.__terminate_pid_var = tk.BooleanVar(value=self.__settings_dict["Terminate PID option"])
-        self._terminate_pid_checkbox = ttk.Checkbutton(self._settings_window, text="Terminate PID option", variable=self.__terminate_pid_var)
-        self._terminate_pid_checkbox.pack()
-
-        self.__display_gametime_var = tk.BooleanVar(value=self.__settings_dict["Display game time option"])
-        self._gametime_checkbox = ttk.Checkbutton(self._settings_window, text="Display game time option", variable=self.__display_gametime_var)
-        self._gametime_checkbox.pack()
-
-        self.__pattern_area_var = tk.BooleanVar(value=self.__settings_dict["Pattern info from area option"])
-        self._area_checkbox = ttk.Checkbutton(self._settings_window, text="Pattern info from area option", variable=self.__pattern_area_var)
-        self._area_checkbox.pack()
 
         self._close_button = ttk.Button(self._settings_window, text="Close", command=self.close_settings)
         self._close_button.pack()
 
     def load_settings(self):
         """Initialization of the checkbox values from the dictionary"""
-        self.__toggle_console_var.set(SettingsWindow.__settings_dict["Toggle console option"])
-        self.__join_next_game_var.set(SettingsWindow.__settings_dict["Next game join option"])
-        self.__legacy_switch_var.set(SettingsWindow.__settings_dict["Legacy toggle option"])
-        self.__resize_var.set(SettingsWindow.__settings_dict["Re-size option"])
-        self.__terminate_pid_var.set(SettingsWindow.__settings_dict["Terminate PID option"])
-        self.__display_gametime_var.set(SettingsWindow.__settings_dict["Display game time option"])
-        self.__pattern_area_var.set(SettingsWindow.__settings_dict["Pattern info from area option"])
+        join_next_game_value = SettingsWindow.__settings_dict["Next game join option"]
+        friends_join_value = SettingsWindow.__settings_dict["Friend join option"]
+
+        if not (join_next_game_value or friends_join_value):
+            join_next_game_value = True
+
+        self.__join_next_game_var.set(join_next_game_value)
+        self.__friends_join_var.set(friends_join_value)
+
+        if friends_join_value:
+            self.disable_game_join()
+        elif join_next_game_value:
+            self.disable_friend_join()
 
     def close_settings(self):
         """Updates the value from the checkbox"""
-        SettingsWindow.__settings_dict["Toggle console option"] = self.__toggle_console_var.get()
-        SettingsWindow.__settings_dict["Next game join option"] = self.__join_next_game_var.get()
-        SettingsWindow.__settings_dict["Legacy toggle option"] = self.__legacy_switch_var.get()
-        SettingsWindow.__settings_dict["Re-size option"] = self.__resize_var.get()
-        SettingsWindow.__settings_dict["Terminate PID option"] = self.__terminate_pid_var.get()
-        SettingsWindow.__settings_dict["Display game time option"] = self.__display_gametime_var.get()
-        SettingsWindow.__settings_dict["Pattern info from area option"] = self.__pattern_area_var.get()
+        last_valid_state = any([
+            SettingsWindow.__settings_dict["Next game join option"],
+            SettingsWindow.__settings_dict["Friend join option"]
+        ])
+
+        if last_valid_state:
+            SettingsWindow.__settings_dict["Next game join option"] = self.__join_next_game_var.get()
+            SettingsWindow.__settings_dict["Friend join option"] = self.__friends_join_var.get()
+        else:
+            self.__join_next_game_var.set(SettingsWindow.__settings_dict["Next game join option"])
+            self.__friends_join_var.set(SettingsWindow.__settings_dict["Friend join option"])
+
         self._settings_window.destroy()
 
     def update_settings(self):
         """Continuously checks for updates"""
         def toggle_values():
-            SettingsWindow.__settings_dict["Toggle console option"] = not SettingsWindow.__settings_dict["Toggle console option"]
             SettingsWindow.__settings_dict["Next game join option"] = not SettingsWindow.__settings_dict["Next game join option"]
-            SettingsWindow.__settings_dict["Legacy toggle option"] = not SettingsWindow.__settings_dict["Legacy toggle option"]
-            SettingsWindow.__settings_dict["Re-size option"] = not SettingsWindow.__settings_dict["Re-size option"]
-            SettingsWindow.__settings_dict["Terminate PID option"] = not SettingsWindow.__settings_dict["Terminate PID option"]
-            SettingsWindow.__settings_dict["Display game time option"] = not SettingsWindow.__settings_dict["Display game time option"]
-            SettingsWindow.__settings_dict["Pattern info from area option"] = not SettingsWindow.__settings_dict["Pattern info from area option"]
+            SettingsWindow.__settings_dict["Friend join option"] = not SettingsWindow.__settings_dict["Friend join option"]
             self._settings_window.after(1000, toggle_values)
+        toggle_values()
 
     def on_close(self):
         """Close function to update and destroy window"""
         self.close_settings()
         self.update_thread.join()
+        self.update_launcher_settings()
+
+    def disable_friend_join(self):
+        """Disables friend list join when game join is selected"""
+        if self.__join_next_game_var.get():
+            self.__friends_join_var.set(False)
+            self._friend_join_checkbox["state"] = "disabled"
+        else:
+            self._friend_join_checkbox["state"] = "normal"
+
+    def disable_game_join(self):
+        """Disables game join when friend list join is selected"""
+        if self.__friends_join_var.get():
+            self.__join_next_game_var.set(False)
+            self._join_next_game_checkbox["state"] = "disabled"
+        else:
+            self._join_next_game_checkbox["state"] = "normal"
+    
+    def update_launcher_settings(self):
+        """Update the launcher settings with the values and destroy after"""
+        self._root.set_settings(self.get_settings())
         self._settings_window.destroy()
+    
+    def get_settings(self):
+        """Get current settings from checkboxes"""
+        return {
+            "Friend join option": self.__friends_join_var.get(),
+            "Next game join option": self.__join_next_game_var.get()
+        }
