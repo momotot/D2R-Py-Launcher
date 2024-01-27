@@ -31,10 +31,10 @@ The author disclaims any liability for any consequences arising from the us or m
 
 ## Features
 
+- Termination of specific processes through the GUI.
 - Launch multiple D2R clients.
 - Automatic joining for leechers to your main characters game. Two seperate methods to choose from.
 - Console log for monitoring.
-- Termination of specific processes through the GUI.
 - Legacy settings option.
 - Window resizing option.
 - Option to active overlay to monitor in-game time.
@@ -95,7 +95,7 @@ The author disclaims any liability for any consequences arising from the us or m
 
 8. **Joining games**
    ```bash
-   After update its not possible to be in lobby, in start screen or in game when pressing next game.
+   After update its now possible to be in lobby, in start screen or in game when pressing next game.
    The only requirement is that the resolution of the joiners are 1280x720 for the pixel clicks to work.
    You can choose in the settings tab what method you prefer.
    If you have friend list join:
@@ -115,3 +115,4 @@ This project is licensed under the MIT License.
 ## Acknowledgements
 
 Thanks to Chobot@d2jsp for the original powershell script for handling the d2r processes.
+Thanks to d2emu for the terror zone tracking.
