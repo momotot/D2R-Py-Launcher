@@ -357,8 +357,8 @@ class Client:
                             time.sleep(sleep_delay)
                             pyautogui.press("esc")
                             time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+645, position[1]+357)
-                            pyautogui.click(x=position[0]+645, y=position[1]+357) # coord for left click on exit menu
+                            pyautogui.moveTo(position[0]+647, position[1]+365)
+                            pyautogui.click(x=position[0]+647, y=position[1]+365) # coord for left click on exit menu
                             time.sleep(sleep_delay)
                             pyautogui.moveTo(position[0]+130, position[1]+546)
                             pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
