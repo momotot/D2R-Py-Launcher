@@ -5,7 +5,6 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, font
 import threading
 from datetime import datetime, timedelta
-import time
 
 import Utils.Reader as Reader
 import Utils.Gametime as Gametime
@@ -85,10 +84,10 @@ class Launcher:
         self._submit_clients = tk.Button(self._root, text="Launch D2R", command=lambda: threading.Thread(target=self.process_clients).start(), bg="grey", width=25)
         self._submit_clients.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
 
-        self._next_game = tk.Button(self._root, text="Next game", command=lambda: threading.Thread(target=self.join_game).start(), bg="grey", width=25)
+        self._next_game = tk.Button(self._root, text="Join game", command=lambda: threading.Thread(target=self.join_game).start(), bg="grey", width=25)
         self._next_game.grid(row=4, column=1, pady=5, padx=5, sticky="ew")
 
-        self._legacy_button = tk.Button(self._root, text="Legacy settings", command=lambda: threading.Thread(target=self.legacy_settings).start(), bg="grey", width=25)
+        self._legacy_button = tk.Button(self._root, text="Legacy", command=lambda: threading.Thread(target=self.legacy_settings).start(), bg="grey", width=25)
         self._legacy_button.grid(row=5, column=0, pady=5, padx=5, sticky="ew")
 
         self._resize_button = tk.Button(self._root, text="Re-size", command=lambda: threading.Thread(target=self.resize).start(), bg="grey", width=25)
@@ -97,13 +96,13 @@ class Launcher:
         self._console_button = tk.Button(self._root, text="Toggle console", command=self.toggle_console, bg="grey", width=25)
         self._console_button.grid(row=4, column=0, pady=5, padx=5, sticky="ew")
 
-        self._memory_button = tk.Button(self._root, text="Game time", command=lambda: threading.Thread(target=self.read_stats).start(), bg="grey", width=25)
+        self._memory_button = tk.Button(self._root, text="Reader", command=lambda: threading.Thread(target=self.read_stats).start(), bg="grey", width=25)
         self._memory_button.grid(row=6, column=1, pady=5, padx=5, sticky="ew")
 
-        self._reset_reader_button = tk.Button(self._root, text="Remove game time", command=self.remove_reader, bg="grey", width=25)
+        self._reset_reader_button = tk.Button(self._root, text="Remove reader", command=self.remove_reader, bg="grey", width=25)
         self._reset_reader_button.grid(row=7, column=1, pady=5, padx=5, sticky="ew")
 
-        self._area_button = tk.Button(self._root, text="Area", command=lambda: threading.Thread(target=self.area_func).start(), bg="grey", width=25)
+        self._area_button = tk.Button(self._root, text="Scan area", command=lambda: threading.Thread(target=self.area_func).start(), bg="grey", width=25)
         self._area_button.grid(row=7, column=0, pady=5, padx=5, sticky="ew")
 
         self._exit_button = tk.Button(self._root, text="Terminate PID", command=self.exit_diablo, bg="grey", width=25)
@@ -275,7 +274,7 @@ class Launcher:
         self.path.set(path)
     
     def join_game(self):
-        """When the next game button is pressed, this function gets executed if there is an active client object. Uses packet reading and types gamename/pw or friend list clicks depending on settings"""
+        """When the join game button is pressed, this function gets executed if there is an active client object. Uses packet reading and types gamename/pw or friend list clicks depending on settings"""
         if self.client_check:
             current_settings = self._settings_window.get_settings() if self._settings_window else {}
             if current_settings.get("Friend join option", False):
@@ -288,7 +287,7 @@ class Launcher:
             self._console.log_message("You must launch the game first", 3)
     
     def read_stats(self):
-        """When game time is pressed the function creates the overlay and initialize the reader object"""
+        """When reader is pressed the function creates the overlay and initialize the reader object"""
         if self.client_check:
             if self._reader is None:
                 for name, _ in self._client_obj.process_info.items():
@@ -356,11 +355,11 @@ class Launcher:
         self.count_down.set(formatted_time_str)
         self._count_down_tz.config(fg="red")
         current_time = datetime.now()
-        self._root.after(1000, self.update_countdown)
 
     def update_countdown(self):
-        threading.Thread(target=self.countdown_to_next).start()
-
+        """Start of countdown thread"""
+        self.countdown_to_next()
+        self._root.after(1000, self.update_countdown)
 
 if __name__ == "__main__":
     """THE MAIN LOOP"""
