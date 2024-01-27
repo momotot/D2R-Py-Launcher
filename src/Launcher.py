@@ -4,6 +4,8 @@ import Client_launcher
 import tkinter as tk
 from tkinter import filedialog, messagebox, font
 import threading
+from datetime import datetime, timedelta
+import time
 
 import Utils.Reader as Reader
 import Utils.Gametime as Gametime
@@ -46,6 +48,8 @@ class Launcher:
         self.terror_zone_current.set("Current")
         self.terror_zone_next = tk.StringVar()
         self.terror_zone_next.set("Next")
+        self.count_down = tk.StringVar()
+        self.count_down.set("")
         self.path = tk.StringVar()
         self.path.set("Browse")
         self.client_amount = tk.StringVar()
@@ -117,6 +121,8 @@ class Launcher:
         self._displayed_terror_zone_next = tk.Label(self._root, textvariable=self.terror_zone_next, bg="black", font=small_font, width=25)
         self._displayed_terror_zone_next.grid(row=12, column=0, pady=5, columnspan=3, sticky="ew")
 
+        self._count_down_tz = tk.Label(self._root, textvariable=self.count_down, bg="black", font=small_font, width=25)
+        self._count_down_tz.grid(row=13, column=0, pady=5, columnspan=3, sticky="ew")
 
         # menu bar stuff
         self._menubar = tk.Menu(self._root)
@@ -153,6 +159,7 @@ class Launcher:
         """Initializing the terror zone tracker object"""
         self._terror_zone_obj = Terror_zone.TerrorZones(self._root, self, self._console)
         self._console.log_message("Terror zone object created", 1)
+        self._root.after(0, self.update_countdown)
     
     def initiate_game_tracker(self):
         """Initializing the game time tracker object"""
@@ -336,6 +343,24 @@ class Launcher:
     def get_settings(self):
         """Getter function for settings"""
         return self._settings if hasattr(self, '_settings') else None
+
+    def countdown_to_next(self):
+        """Continuously updates the countdown to next hour = next tz"""
+        current_time = datetime.now()
+        next_hour = (current_time + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+
+        remaining_time = next_hour - current_time
+        minutes, seconds = divmod(remaining_time.seconds, 60)
+        formatted_time_str = f"{minutes:02}:{seconds:02}"
+
+        self.count_down.set(formatted_time_str)
+        self._count_down_tz.config(fg="red")
+        current_time = datetime.now()
+        self._root.after(1000, self.update_countdown)
+
+    def update_countdown(self):
+        threading.Thread(target=self.countdown_to_next).start()
+
 
 if __name__ == "__main__":
     """THE MAIN LOOP"""
