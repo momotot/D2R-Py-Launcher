@@ -18,6 +18,7 @@ import numpy as np
 from pathlib import Path
 import random
 from Utils.Reader import MemoryReader
+from Utils.Game_joiner import GameJoiner
 
 class Client:   
     def __init__ (self, root, clients, folder_path, path, console):
@@ -26,7 +27,7 @@ class Client:
         self._folder_path = folder_path
         self.diablo_path = path
         self._console = console
-
+        self._game_joiner = None
         self.legacy = False  
         self.process_dict = {}
         self.window_names = [] 
@@ -190,7 +191,10 @@ class Client:
             if len(self.window_names) == 0:
                 self._console.log_message("No window(s) opened", 2)
                 return
-            sleep_delay = 0.1
+
+            if self._game_joiner is None:
+                game_joiner = GameJoiner(self._console)
+
             for name in self.window_names:
                 if "MAIN" in name: # main character should not join, only create
                     continue
@@ -209,81 +213,17 @@ class Client:
 
                 if current_location == "start": # is at start screen
                     if position:
-                        pyautogui.moveTo(position[0]+755, position[1]+683)
-                        pyautogui.click(x=position[0]+755, y=position[1]+683) # press enter lobby
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+857, position[1]+137)
-                        pyautogui.click(x=position[0]+857, y=position[1]+137) # click the game name label to write
-                        pyautogui.hotkey("ctrl", "a") # mark previous games, otherwise it can get messy..
-                        time.sleep(sleep_delay)
-                        pyautogui.typewrite(game_name)
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+1051, position[1]+138)
-                        pyautogui.click(x=position[0]+1051, y=position[1]+138) # click the password label to write
-                        pyautogui.hotkey("ctrl", "a")
-                        time.sleep(sleep_delay)
-                        pyautogui.typewrite(password)
-                        pyautogui.press("enter")
-                        self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.start_screen_join_read(name,position, game_name,password)
                     else:
                         self._console.log_message("No valid window position", 3) 
                 elif current_location == "lobby":
                     if position:
-                        pyautogui.moveTo(position[0]+857, position[1]+137)
-                        pyautogui.click(x=position[0]+857, y=position[1]+137) # click the game name label to write
-                        pyautogui.hotkey("ctrl", "a") # mark previous games, otherwise it can get messy..
-                        time.sleep(sleep_delay)
-                        pyautogui.typewrite(game_name)
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+1051, position[1]+138)
-                        pyautogui.click(x=position[0]+1051, y=position[1]+138) # click the password label to write
-                        pyautogui.hotkey("ctrl", "a")
-                        time.sleep(sleep_delay)
-                        pyautogui.typewrite(password)
-                        pyautogui.press("enter")
-                        self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.lobby_join_read(name, position, game_name, password)
                     else:
                         self._console.log_message("No valid window position", 3) 
                 else:
                     if position:
-                        if not self.legacy:
-                            pyautogui.press("esc")
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+645, position[1]+357)
-                            pyautogui.click(x=position[0]+645, y=position[1]+357) # coord for left click on exit menu
-                            time.sleep(sleep_delay)                
-                            pyautogui.moveTo(position[0]+857, position[1]+137)
-                            pyautogui.click(x=position[0]+857, y=position[1]+137) # click the game name label to write
-                            pyautogui.hotkey("ctrl", "a") # mark previous games, otherwise it can get messy..
-                            time.sleep(sleep_delay)
-                            pyautogui.typewrite(game_name)
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+1051, position[1]+138)
-                            pyautogui.click(x=position[0]+1051, y=position[1]+138) # click the password label to write
-                            pyautogui.hotkey("ctrl", "a")
-                            time.sleep(sleep_delay)
-                            pyautogui.typewrite(password)
-                            pyautogui.press("enter")
-                            self._console.log_message(f"{name} joined a new game", 1)
-                        else:
-                            pyautogui.press("esc")
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+615, position[1]+325)
-                            pyautogui.click(x=position[0]+615, y=position[1]+325) # coord for left click on exit menu
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+857, position[1]+137)
-                            pyautogui.click(x=position[0]+857, y=position[1]+137) # click the game name label to write
-                            pyautogui.hotkey("ctrl", "a") # mark previous games, otherwise it can get messy..
-                            time.sleep(sleep_delay)
-                            pyautogui.typewrite(game_name)
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+1051, position[1]+138)
-                            pyautogui.click(x=position[0]+1051, y=position[1]+138) # click the password label to write
-                            pyautogui.hotkey("ctrl", "a")
-                            time.sleep(sleep_delay)
-                            pyautogui.typewrite(password)
-                            pyautogui.press("enter")
-                            self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.in_game_join_read(name, position, game_name, password, self.legacy)
                     else:
                         self._console.log_message("No valid window position", 3) 
             self.legacy = False
@@ -306,95 +246,32 @@ class Client:
                 self._console.log_message("No window(s) opened", 2)
                 return
             self._console.log_message("Attempting next game join", 1)
-            sleep_delay = 0.1
+
+            if self._game_joiner is None:
+                game_joiner = GameJoiner(self._console)
+
             for name in self.window_names:
                 if "MAIN" in name: # main character should not join, only create
                     continue
                 position = self.get_window_position(name)
                 self.get_window_front(name)
                 current_location = self.check_if_lobby(name)
+
                 if current_location == "start": # is at start screen
                     if position:
-                        pyautogui.moveTo(position[0]+755, position[1]+683)
-                        pyautogui.click(x=position[0]+755, y=position[1]+683) # press enter lobby
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+130, position[1]+546)
-                        pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+206, position[1]+140)
-                        pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+204, position[1]+166)
-                        pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+336, position[1]+276)
-                        pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
-                        time.sleep(sleep_delay)
-                        self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.start_screen_join_friend(name, position)
                     else:
-                        self._console.log_message("No valid window position", 3)  
-                elif current_location == "lobby": # is in lobby
+                        self._console.log_message("No valid window position", 3) 
+                elif current_location == "lobby":
                     if position:
-                        pyautogui.moveTo(position[0]+130, position[1]+546)
-                        pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+206, position[1]+140)
-                        pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+204, position[1]+166)
-                        pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
-                        time.sleep(sleep_delay)
-                        pyautogui.moveTo(position[0]+336, position[1]+276)
-                        pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
-                        time.sleep(sleep_delay)
-                        self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.lobby_join_friend(name, position)
                     else:
-                        self._console.log_message("No valid window position", 3)  
+                        self._console.log_message("No valid window position", 3) 
                 else:
                     if position:
-                        # coordinates are on 1280x720 windows
-                        if not self.legacy: # positions for non-legacy
-                            time.sleep(sleep_delay)
-                            pyautogui.press("esc")
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+647, position[1]+365)
-                            pyautogui.click(x=position[0]+647, y=position[1]+365) # coord for left click on exit menu
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+130, position[1]+546)
-                            pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+206, position[1]+140)
-                            pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+204, position[1]+166)
-                            pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+336, position[1]+276)
-                            pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
-                            time.sleep(sleep_delay)
-                            self._console.log_message(f"{name} joined a new game", 1)
-                        else: # positions for legacy
-                            time.sleep(sleep_delay)
-                            pyautogui.press("esc")
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+615, position[1]+325)
-                            pyautogui.click(x=position[0]+615, y=position[1]+325) # coord for left click on exit menu
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+130, position[1]+546)
-                            pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+206, position[1]+140)
-                            pyautogui.click(x=position[0]+206, y=position[1]+140) # coord for left click on friend list bar
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+204, position[1]+166)
-                            pyautogui.rightClick(x=position[0]+204, y=position[1]+166) # coord for right click on the friend
-                            time.sleep(sleep_delay)
-                            pyautogui.moveTo(position[0]+336, position[1]+276)
-                            pyautogui.click(x=position[0]+336, y=position[1]+276) # coord for left click on join game
-                            time.sleep(sleep_delay)
-                            self._console.log_message(f"{name} joined a new game", 1)
+                        game_joiner.in_game_join_friend(name, position, self.legacy)
                     else:
-                        self._console.log_message("No valid window position", 3)      
+                        self._console.log_message("No valid window position", 3)     
             self.legacy = False
             
             for name in self.window_names:
