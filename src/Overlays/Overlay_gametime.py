@@ -80,8 +80,8 @@ class OverlayGameTime:
 
             if self.window_position and self._settings_window:
                 game_time_overlay_pos_1 = self._settings_window.get_settings().get("Game time overlay pos 1", False)
-                width = 2000 if game_time_overlay_pos_1 else 500
-                height = 200 if game_time_overlay_pos_1 else 800
+                width = 500 if game_time_overlay_pos_1 else 2000
+                height = 800 if game_time_overlay_pos_1 else 200
                 self._root.geometry(f"{width}x{height}+{self.window_position[0]}+{self.window_position[1]}")
             elif self.window_position:
                 self._root.geometry(f"2000x200+{self.window_position[0]}+{self.window_position[1]}")
