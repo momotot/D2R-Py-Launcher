@@ -57,6 +57,8 @@ class BattleOrder():
                         time.sleep(self.__sleep_delay)
 
                         self.non_legacy_act1_to_act4(position, name, warcry_keys)
+                    else:
+                        self._console.log_message("Cant find rogue wp", 3)
 
                 for name in self._client_obj.window_names:
                     if "MAIN" in name:
@@ -72,10 +74,18 @@ class BattleOrder():
 
                 self.non_legacy_act4(position, name, warcry_keys)
 
-            for name in self._client_obj.window_names:
-                if "MAIN" in name:
-                    self._client_obj.get_window_front(name)
-                    break
+                for name in self._client_obj.window_names:
+                    if "MAIN" in name:
+                        self._client_obj.get_window_front(name)
+                        break         
+            else:
+                self._console.log_message("Cant find start point in bo action non-legacy", 3)
+                
+                for name in self._client_obj.window_names:
+                    if "MAIN" in name:
+                        self._client_obj.get_window_front(name)
+                        break
+
         # Actions for legacy
         else:
             result = self.read_bo_image(name, conditions=["leg_act1", "leg_corner"])
@@ -117,6 +127,8 @@ class BattleOrder():
                         time.sleep(self.__sleep_delay)
 
                         self.legacy_act1_to_act4(position, name, warcry_keys)
+                    else:
+                        self._console.log_message("Cant find log rogue wp", 3)
 
                 for name in self._client_obj.window_names:
                     if "MAIN" in name:
@@ -136,7 +148,14 @@ class BattleOrder():
                     if "MAIN" in name:
                         self._client_obj.get_window_front(name)
                         break
-     
+            else:
+                self._console.log_message("Cant find start point in bo action legacy", 3)
+
+                for name in self._client_obj.window_names:
+                    if "MAIN" in name:
+                        self._client_obj.get_window_front(name)
+                        break
+        
     def non_legacy_act1_to_act4(self, position, name, warcry_keys):
         """Actions from act1 to battle order for non-legacy graphics"""
         find_act4 = self.read_bo_image(name, conditions=["wp"])
@@ -181,6 +200,8 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + 517, position[1] + 506)
                         pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                         self._console.log_message("BO done", 1)
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
                 else:                  
                     pyautogui.moveTo(position[0]+551, position[1]+234)
                     pyautogui.click(x=position[0]+551, y=position[1]+234)
@@ -195,6 +216,12 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + 517, position[1] + 506)
                         pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                         self._console.log_message("BO done", 1)
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
+            else:
+                self._console.log_message("Cant find rof wp", 3)
+        else:
+            self._console.log_message("Cant find wp", 3)
 
     def legacy_act1_to_act4(self, position, name, warcry_keys):
         """Actions from act1 to battle order for legacy graphics"""
@@ -234,6 +261,8 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + pand_x, position[1] + pand_y)
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
                 else:                  
                     pyautogui.moveTo(position[0]+563, position[1]+280) #
                     pyautogui.click(x=position[0]+563, y=position[1]+280) #
@@ -245,7 +274,12 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + pand_x, position[1] + pand_y)
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
-    
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
+            else:
+                self._console.log_message("Cant find leg rof wp", 3)
+        else:
+            self._console.log_message("Cant find leg wp", 3) 
     def non_legacy_act4(self, position, name, warcry_keys):
         """Actions from act4 to battle order for non-legacy graphics"""
         find_rof = self.read_bo_image(name, conditions=["rof"])
@@ -283,6 +317,8 @@ class BattleOrder():
                     pyautogui.moveTo(position[0] + 517, position[1] + 506)
                     pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                     self._console.log_message("BO done", 1)
+                else:
+                    self._console.log_message("Cant find pand wp", 3)
             else:                  
                 pyautogui.moveTo(position[0]+551, position[1]+234)
                 pyautogui.click(x=position[0]+551, y=position[1]+234)
@@ -297,6 +333,10 @@ class BattleOrder():
                     pyautogui.moveTo(position[0] + 517, position[1] + 506)
                     pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                     self._console.log_message("BO done", 1)
+                else:
+                    self._console.log_message("Cant find pand wp", 3)
+        else:
+            self._console.log_message("Cant find rof wp", 3)
 
     def legacy_act4(self, position, name, warcry_keys):
         """Actions from act4 to battle order for legacy graphics"""
@@ -337,6 +377,8 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + pand_x, position[1] + pand_y)
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
                 else:
                     pyautogui.moveTo(position[0]+563, position[1]+280) 
                     pyautogui.click(x=position[0]+563, y=position[1]+280) 
@@ -348,6 +390,12 @@ class BattleOrder():
                         pyautogui.moveTo(position[0] + pand_x, position[1] + pand_y)
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
+                    else:
+                        self._console.log_message("Cant find pand wp", 3)
+            else:
+                self._console.log_message("Cant find rof wp", 3)
+        else:
+            self._console.log_message("Cant find act4 wp", 3)
 
     def cast_battle_orders(self, warcry_keys):
         """Battle orders action"""
