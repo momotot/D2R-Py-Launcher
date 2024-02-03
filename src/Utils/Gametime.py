@@ -1,4 +1,3 @@
-
 class GameTimeTracker:
     def __init__(self):
         self.in_game = False

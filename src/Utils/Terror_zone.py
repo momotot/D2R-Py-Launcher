@@ -1,7 +1,8 @@
 import requests
-from datetime import datetime, timedelta
 import threading
 import time
+from datetime import datetime
+
 import Data.Areas
 
 class TerrorZones():
