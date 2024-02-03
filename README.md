@@ -1,6 +1,6 @@
-# D2R-Py-Launcher 1.1.0
+# D2R-Py-Launcher 1.1.1
 
-![D2R-Py-Launcher](https://i.imgur.com/6bY1JF5.png)
+![D2R-Py-Launcher](https://i.imgur.com/IrNneH6.png)
 ![D2R-Py-Launcher](https://i.imgur.com/NvEeKhT.png)
 
 ## Table of Contents
@@ -31,15 +31,16 @@ The author disclaims any liability for any consequences arising from the us or m
 
 ## Features
 
-- Termination of specific processes through the GUI.
 - Launch multiple D2R clients.
 - Automatic joining for leechers to your main characters game. Two seperate methods to choose from.
-- Console log for monitoring.
-- Legacy settings option.
-- Window resizing option.
+- Automatic BO (Battle Order) at River of Flames waypoint (Start from act1 or act4).
 - Option to active overlay to monitor in-game time.
 - Option to present known patterns in an overlay based on current area via tesseract OCR.
 - Tracker of current and next TZ through d2emu.com.
+- Console log for monitoring.
+- Legacy settings option.
+- Window resizing option.
+- Termination of specific processes through the GUI.
 
 ## Requirements
 
@@ -102,6 +103,13 @@ The author disclaims any liability for any consequences arising from the us or m
    - Joining is through friend list so the main char must be the only added account to the leechers friend list
    - The main character must be online (green status) on battle.net - this can sometimes be buggy!
    - You can be in either d2r or legacy graphic mode, both will work
+
+9. **Battle Orders**
+   ```bash
+   Possibility to press BO button to let your Barbarian give you BO at River of Flames wp.
+   Works from act1 or act4 in both non-legacy and legacy settings.
+   You must have your Barbarian named as "BO" in the config.ini for it to work.
+   BC must be set to the key F1, BO to F2 and Shout to F3.
 
 ## Troubleshooting
 
