@@ -162,8 +162,8 @@ class GameJoiner():
                 time.sleep(self.__sleep_delay)
                 pyautogui.press("esc")
                 time.sleep(self.__sleep_delay)
-                pyautogui.moveTo(position[0]+615, position[1]+325)
-                pyautogui.click(x=position[0]+615, y=position[1]+325) # coord for left click on exit menu
+                pyautogui.moveTo(position[0]+632, position[1]+331)
+                pyautogui.click(x=position[0]+632, y=position[1]+331) # coord for left click on exit menu
                 time.sleep(self.__sleep_delay)
                 pyautogui.moveTo(position[0]+130, position[1]+546)
                 pyautogui.click(x=position[0]+130, y=position[1]+546) # coord for left click on friend list symbol

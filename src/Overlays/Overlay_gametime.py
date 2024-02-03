@@ -6,13 +6,14 @@ import psutil
 from queue import Queue
 
 class OverlayGameTime:
-    def __init__(self, root, console, client_obj, game_tracker):
+    def __init__(self, root, console, client_obj, game_tracker, settings_window):
         self._root = None
         self._console = console
         self.label = None
         self._main_root = root
         self._client_obj = client_obj
         self._game_tracker = game_tracker
+        self._settings_window = settings_window
         self.window_name = None
         self._process_name = "D2R.exe"
         
@@ -77,8 +78,13 @@ class OverlayGameTime:
                         window_name = name
             self.window_position = self._client_obj.get_window_position(window_name)
 
-            if self.window_position:
-                self._root.geometry(f"500x800+{self.window_position[0]}+{self.window_position[1]}")
+            if self.window_position and self._settings_window:
+                game_time_overlay_pos_1 = self._settings_window.get_settings().get("Game time overlay pos 1", False)
+                width = 2000 if game_time_overlay_pos_1 else 500
+                height = 200 if game_time_overlay_pos_1 else 800
+                self._root.geometry(f"{width}x{height}+{self.window_position[0]}+{self.window_position[1]}")
+            elif self.window_position:
+                self._root.geometry(f"2000x200+{self.window_position[0]}+{self.window_position[1]}")
 
         elif not process_found and self.label:
             self.remove_label()

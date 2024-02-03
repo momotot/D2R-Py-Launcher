@@ -53,7 +53,6 @@ class Console:
         """Function to hide the console"""
         self._console.withdraw()
 
-
     def log_message(self, message, level):
         """The log message function. Will log white/yellow/red depending on level"""
         time_stamp = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")

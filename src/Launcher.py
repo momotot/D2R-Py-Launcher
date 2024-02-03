@@ -33,6 +33,7 @@ class Launcher:
         self.initiate_app()
         self.decorate_app()
         self.initiate_console()
+        self.initiate_settings()
         self.initiate_terror_zone()
         self.initiate_game_tracker()
         self._folder_path = os.path.dirname(os.path.abspath(__file__))
@@ -141,7 +142,7 @@ class Launcher:
     
     def open_settings_window(self):
         """Creation of the settings window"""
-        self._settings_window = Settings_window.SettingsWindow(self._root)
+        self._settings_window.show_settings()
 
     def toggle_console(self):
         """Function to show/hide the console window - will never stop running while app is running"""
@@ -151,6 +152,11 @@ class Launcher:
         else:
             self._console.hide_console()
             self._console.log_message("Hiding console window", 1)
+
+    def initiate_settings(self):
+        """Initializing the settings object"""
+        self._settings_window = Settings_window.SettingsWindow(self._root, self._console)
+        self._console.log_message("Settings object created", 1)
 
     def initiate_console(self):
         """Initializing the console object"""
@@ -295,7 +301,7 @@ class Launcher:
             if self._reader is None:
                 for name, _ in self._client_obj.process_info.items():
                     if "[MAIN]" in name:
-                        self._overlay_gametime_obj = Overlay_gametime.OverlayGameTime(self._root, self._console, self._client_obj, self.game_tracker)
+                        self._overlay_gametime_obj = Overlay_gametime.OverlayGameTime(self._root, self._console, self._client_obj, self.game_tracker, self._settings_window)
                         self._reader = Reader.MemoryReader(self, self._console, self._client_obj, self.game_tracker, self._overlay_gametime_obj)
                         self._reader.check_in_game_status()
                         break
