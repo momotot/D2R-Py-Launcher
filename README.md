@@ -109,7 +109,10 @@ The author disclaims any liability for any consequences arising from the us or m
    Possibility to press BO button to let your Barbarian give you BO at River of Flames wp.
    Works from act1 or act4 in both non-legacy and legacy settings.
    You must have your Barbarian named as "BO" in the config.ini for it to work.
-   BC must be set to the key F1, BO to F2 and Shout to F3.
+   Default keys are F1,F2,F3 for BC,BO,Shout. You can change this in the settings tab.
+   If you change:
+   - You must have three inputs in the format x,x,x or xx,xx,xx
+   - Keys can contain of 1 or 2 digits/letters and can be mixed
 
 ## Troubleshooting
 

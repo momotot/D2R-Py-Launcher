@@ -17,7 +17,7 @@ class BattleOrder():
         self.__sleep_delay = 1.25
         self.__bo_delay = 0.35
 
-    def bo_action(self, position, name):
+    def bo_action(self, position, name, warcry_keys):
         """Searches the area and does actions depending on where it is to cast bo at River of Flames"""
         self._legacy = self._client_obj.get_legacy_status()
         # Actions for non-legacy
@@ -37,7 +37,7 @@ class BattleOrder():
                     pyautogui.click(x=position[0]+rogue_x, y=position[1]+rogue_y)
                     time.sleep(self.__sleep_delay)
 
-                    self.non_legacy_act1_to_act4(position, name)
+                    self.non_legacy_act1_to_act4(position, name, warcry_keys)
             
                 # Second layout of wp act1
                 else:
@@ -56,7 +56,7 @@ class BattleOrder():
                         pyautogui.click(x=position[0]+rogue_x, y=position[1]+rogue_y)
                         time.sleep(self.__sleep_delay)
 
-                        self.non_legacy_act1_to_act4(position, name)
+                        self.non_legacy_act1_to_act4(position, name, warcry_keys)
 
                 for name in self._client_obj.window_names:
                     if "MAIN" in name:
@@ -70,7 +70,7 @@ class BattleOrder():
                 pyautogui.click(x=position[0] + act4_result_x, y=position[1] + act4_result_y)
                 time.sleep(self.__sleep_delay)
 
-                self.non_legacy_act4(position, name)
+                self.non_legacy_act4(position, name, warcry_keys)
 
             for name in self._client_obj.window_names:
                 if "MAIN" in name:
@@ -95,7 +95,7 @@ class BattleOrder():
                     pyautogui.click(x=position[0]+rogue_x, y=position[1]+rogue_y)
                     time.sleep(self.__sleep_delay)
 
-                    self.legacy_act1_to_act4(position, name)
+                    self.legacy_act1_to_act4(position, name, warcry_keys)
 
                 # Second layout of wp in act1
                 else:
@@ -116,7 +116,7 @@ class BattleOrder():
                         pyautogui.click(x=position[0]+rogue_x, y=position[1]+rogue_y)
                         time.sleep(self.__sleep_delay)
 
-                        self.legacy_act1_to_act4(position, name)
+                        self.legacy_act1_to_act4(position, name, warcry_keys)
 
                 for name in self._client_obj.window_names:
                     if "MAIN" in name:
@@ -130,14 +130,14 @@ class BattleOrder():
                 pyautogui.click(x=position[0] + act4_result_x, y=position[1] + act4_result_y)
                 time.sleep(self.__sleep_delay)
 
-                self.legacy_act4(position, name)
+                self.legacy_act4(position, name, warcry_keys)
 
                 for name in self._client_obj.window_names:
                     if "MAIN" in name:
                         self._client_obj.get_window_front(name)
                         break
      
-    def non_legacy_act1_to_act4(self, position, name):
+    def non_legacy_act1_to_act4(self, position, name, warcry_keys):
         """Actions from act1 to battle order for non-legacy graphics"""
         find_act4 = self.read_bo_image(name, conditions=["wp"])
 
@@ -153,7 +153,7 @@ class BattleOrder():
                 pyautogui.moveTo(position[0] + rof_x, position[1] + rof_y)
                 pyautogui.click(x=position[0] + rof_x, y=position[1] + rof_y)
                 time.sleep(self.__sleep_delay)
-                self.cast_battle_orders()
+                self.cast_battle_orders(warcry_keys)
 
                 find_portal_or_wp = self.read_bo_image(name, conditions=["portal", "rof_wp"])
 
@@ -196,7 +196,7 @@ class BattleOrder():
                         pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                         self._console.log_message("BO done", 1)
 
-    def legacy_act1_to_act4(self, position, name):
+    def legacy_act1_to_act4(self, position, name, warcry_keys):
         """Actions from act1 to battle order for legacy graphics"""
         find_act4 = self.read_bo_image(name, conditions=["leg_wp"])
 
@@ -212,7 +212,7 @@ class BattleOrder():
                 pyautogui.moveTo(position[0] + rof_x, position[1] + rof_y)
                 pyautogui.click(x=position[0] + rof_x, y=position[1] + rof_y)
                 time.sleep(self.__sleep_delay)
-                self.cast_battle_orders()
+                self.cast_battle_orders(warcry_keys)
 
                 find_portal_or_wp = self.read_bo_image(name, conditions=["leg_portal", "leg_rof_wp"])
 
@@ -246,7 +246,7 @@ class BattleOrder():
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
     
-    def non_legacy_act4(self, position, name):
+    def non_legacy_act4(self, position, name, warcry_keys):
         """Actions from act4 to battle order for non-legacy graphics"""
         find_rof = self.read_bo_image(name, conditions=["rof"])
 
@@ -255,7 +255,7 @@ class BattleOrder():
             pyautogui.moveTo(position[0] + rof_x, position[1] + rof_y)
             pyautogui.click(x=position[0] + rof_x, y=position[1] + rof_y)
             time.sleep(self.__sleep_delay)
-            self.cast_battle_orders()
+            self.cast_battle_orders(warcry_keys)
 
             find_portal_or_wp = self.read_bo_image(name, conditions=["portal", "rof_wp"])
 
@@ -298,7 +298,7 @@ class BattleOrder():
                     pyautogui.click(x=position[0] + 517, y=position[1] + 506)
                     self._console.log_message("BO done", 1)
 
-    def legacy_act4(self, position, name):
+    def legacy_act4(self, position, name, warcry_keys):
         """Actions from act4 to battle order for legacy graphics"""
         find_act4_wp = self.read_bo_image(name, conditions=["leg_act4_wp"])
 
@@ -315,7 +315,7 @@ class BattleOrder():
                 pyautogui.moveTo(position[0] + rof_x, position[1] + rof_y)
                 pyautogui.click(x=position[0] + rof_x, y=position[1] + rof_y)
                 time.sleep(self.__sleep_delay)
-                self.cast_battle_orders()
+                self.cast_battle_orders(warcry_keys)
 
                 find_portal_or_wp = self.read_bo_image(name, conditions=["leg_portal", "leg_rof_wp"])
 
@@ -349,18 +349,13 @@ class BattleOrder():
                         pyautogui.click(x=position[0] + pand_x, y=position[1] + pand_y)
                         self._console.log_message("BO done", 1)
 
-    def cast_battle_orders(self):
+    def cast_battle_orders(self, warcry_keys):
         """Battle orders action"""
         self._console.log_message("Warcries now!", 1)
-        pyautogui.press("F1")
-        pyautogui.rightClick()
-        time.sleep(self.__bo_delay)
-        pyautogui.press("F2")
-        pyautogui.rightClick()
-        time.sleep(self.__bo_delay)
-        pyautogui.press("F3")
-        pyautogui.rightClick()
-        time.sleep(self.__bo_delay)
+        for key in warcry_keys:
+            pyautogui.press(f"{key}")
+            pyautogui.rightClick()
+            time.sleep(self.__bo_delay)
 
     def read_bo_image(self, name, conditions):
         """Searches for specific locations in act1/4 based on conditions"""

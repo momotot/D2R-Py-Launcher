@@ -368,12 +368,16 @@ class Launcher:
         """Initiates the Battle Order function"""
         if self.client_check:
             try:
+                warcry_keys = []
+                if self._settings_window:
+                    warcry_keys = self._settings_window.get_settings().get("WarcriesKeys", [])
                 legacy_setting = self._client_obj.get_legacy_status()
                 bo_obj = Battle_order.BattleOrder(self._console, self._client_obj, legacy_setting)
                 for name in self._client_obj.window_names:
                     if "BO" in name:
                         position = self._client_obj.get_window_position(name)
-                        bo_obj.bo_action(position, name)
+                        bo_obj.bo_action(position, name, warcry_keys)
+                        break               
             except:
                 self._console.log_message(f"Error in go_bo", 3)
         else:

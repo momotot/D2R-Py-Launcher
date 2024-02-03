@@ -5,12 +5,13 @@ import threading
 class SettingsWindow:
     __settings_dict = {
     "Friend join option": True,
-    "Next game join option": False
+    "Next game join option": False,
+    "WarcriesKeys": ["F1", "F2", "F3"]
 }  
     
     def __init__(self, root):
         self._root = root
-        self._root.title("Settings")
+        self._root.title("D2R-Py-Launcher 1.1.1")
         self._settings_window = tk.Toplevel(self._root)
         x = self._root.winfo_x()
         y = self._root.winfo_y()
@@ -36,6 +37,13 @@ class SettingsWindow:
         self._join_next_game_checkbox = ttk.Checkbutton(self._settings_window, text="Next game lobby",variable=self.__join_next_game_var, command=self.disable_friend_join)
         self._join_next_game_checkbox.pack()
 
+        self.__warcry_keys_label = ttk.Label(self._settings_window, text="Warcry keys:")
+        self.__warcry_keys_label.pack()
+
+        self.__warcries_entry = ttk.Entry(self._settings_window)
+        self.__warcries_entry.insert(0, ", ".join(SettingsWindow.__settings_dict["WarcriesKeys"]))
+        self.__warcries_entry.pack()
+
         self._close_button = ttk.Button(self._settings_window, text="Close", command=self.close_settings)
         self._close_button.pack()
 
@@ -43,6 +51,7 @@ class SettingsWindow:
         """Initialization of the checkbox values from the dictionary"""
         join_next_game_value = SettingsWindow.__settings_dict["Next game join option"]
         friends_join_value = SettingsWindow.__settings_dict["Friend join option"]
+        warcry_value = SettingsWindow.__settings_dict["WarcriesKeys"]
 
         if not (join_next_game_value or friends_join_value):
             join_next_game_value = True
@@ -55,12 +64,25 @@ class SettingsWindow:
         elif join_next_game_value:
             self.disable_friend_join()
 
+    def validate_warcry_keys(self, keys_input):
+        """Validate the format of the warcry keys string"""
+        keys = keys_input.split(",")
+        return len(keys) == 3 and all(1 <= len(key.strip()) <= 2 for key in keys)
+         
     def close_settings(self):
-        """Updates the value from the checkbox"""
+        """Updates the value from the checkboxes"""
         last_valid_state = any([
             SettingsWindow.__settings_dict["Next game join option"],
             SettingsWindow.__settings_dict["Friend join option"]
         ])
+
+        last_valid_state_warcry = self.validate_warcry_keys(self.__warcries_entry.get())
+
+        if last_valid_state_warcry:
+            SettingsWindow.__settings_dict["WarcriesKeys"] = [key.strip().upper() for key in self.__warcries_entry.get().split(",")]
+        else:
+            self.__warcries_entry.delete(0, tk.END)
+            self.__warcries_entry.insert(0, ", ".join(SettingsWindow.__settings_dict["WarcriesKeys"]))
 
         if last_valid_state:
             SettingsWindow.__settings_dict["Next game join option"] = self.__join_next_game_var.get()
@@ -76,7 +98,11 @@ class SettingsWindow:
         def toggle_values():
             SettingsWindow.__settings_dict["Next game join option"] = not SettingsWindow.__settings_dict["Next game join option"]
             SettingsWindow.__settings_dict["Friend join option"] = not SettingsWindow.__settings_dict["Friend join option"]
+            warcry_input = self.__warcries_entry.get()
+            if self.validate_warcry_keys(warcry_input):
+                SettingsWindow.__settings_dict["WarcriesKeys"] = [key.strip().upper() for key in warcry_input.split(",")]
             self._settings_window.after(1000, toggle_values)
+        
         toggle_values()
 
     def on_close(self):
@@ -110,5 +136,6 @@ class SettingsWindow:
         """Get current settings from checkboxes"""
         return {
             "Friend join option": self.__friends_join_var.get(),
-            "Next game join option": self.__join_next_game_var.get()
+            "Next game join option": self.__join_next_game_var.get(),
+            "WarcriesKeys": SettingsWindow.__settings_dict["WarcriesKeys"]
         }
