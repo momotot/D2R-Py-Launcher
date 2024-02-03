@@ -21,7 +21,8 @@ class Help:
         """The text that is displayed inside the help window"""
         return "1. Choose D2R.exe path\n2. Enter how many clients you want to launch\n3. Press Launch button and wait until done\n\
 4. Go into game with your main char\n5. Select in settings your join method\n6. You can use legacy settings (recommended) via the Legacy button\n7. Press Join game to join with leechers\n\
-8. You can use the game time button to display in game time and game count\n9. You can use the area button to have known patterns displayed\n10. Enjoy!"
+8. You can use the game time button to display in game time and game count\n9. You can use the area button to have known patterns displayed\n\
+10. You can use the BO button to use battle orders at river wp\n11.Enjoy!"
 
     def close_help_window(self):
         """Close function of the help window"""

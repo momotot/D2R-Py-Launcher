@@ -10,13 +10,13 @@ import win32con
 import win32api
 import psutil
 import re
-import tkinter as tk
-from tkinter import ttk
 import threading
 import cv2
 import numpy as np
+import tkinter as tk
+from tkinter import ttk
 from pathlib import Path
-import random
+
 from Utils.Reader import MemoryReader
 from Utils.Game_joiner import GameJoiner
 
@@ -28,6 +28,7 @@ class Client:
         self.diablo_path = path
         self._console = console
         self._game_joiner = None
+        self.__count = 0
         self.legacy = False  
         self.process_dict = {}
         self.window_names = [] 
@@ -205,7 +206,7 @@ class Client:
 
                 self._reader_object = MemoryReader.return_current_object()
                 if self._reader_object is None:
-                    self._console.log_message("Reader object doesnt exist, you must active 'Game time'", 2)
+                    self._console.log_message("Reader object doesnt exist, you must active 'Reader'", 2)
                     return
                 self._console.log_message("Attempting next game join", 1)
                 game_name = self._reader_object.get_gamename_info()
@@ -227,7 +228,8 @@ class Client:
                     else:
                         self._console.log_message("No valid window position", 3) 
             self.legacy = False
-            
+            self.__count = 0
+
             for name in self.window_names:
                 if "MAIN" in name:
                     self.get_window_front(name)
@@ -273,6 +275,7 @@ class Client:
                     else:
                         self._console.log_message("No valid window position", 3)     
             self.legacy = False
+            self.__count = 0
             
             for name in self.window_names:
                 if "MAIN" in name:
@@ -294,27 +297,18 @@ class Client:
             if "MAIN" in name:
                 continue
             try:
-                position = self.get_window_position(name)
-
-                coordinates_dict = {
-                    "1": (870,300),
-                    "2": (591,490),
-                    "3": (669,255),
-                    "4": (290,304)
-                    }
-
-                random_coordinate = random.choice(list(coordinates_dict.values()))
                 self.get_window_front(name)
                 time.sleep(0.1)
                 pyautogui.press("'") # Make sure this key is your key to change graphics
                 time.sleep(0.1)
-                pyautogui.moveTo(position[0]+random_coordinate[0], position[1]+random_coordinate[1])
-                pyautogui.click(x=position[0]+random_coordinate[0], y=position[1]+random_coordinate[1]) # coord for left click on exit menu
-                time.sleep(0.1)
                 self._console.log_message(f"Changed {name} to legacy graphic", 1)
             except:
                 self._console.log_message(f"Error changing to legacy for {name}", 3)
-        self.legacy = True
+        if self.__count % 2 == 0:
+            self.legacy = True
+        else:
+            self.legacy = False
+        self.__count += 1
         
         for name in self.window_names:
             if "MAIN" in name:
@@ -464,6 +458,10 @@ class Client:
         pyautogui.moveTo(position[0]+755, position[1]+683)
         pyautogui.click(x=position[0]+755, y=position[1]+683) # press enter lobby
         self._console.log_message(f"{name} in lobby", 1)
+    
+    def get_legacy_status(self):
+        """Getter for legacy status"""
+        return self.legacy
 
     def is_start_image_present(self):
         """Function to read the image at start screen"""

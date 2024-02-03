@@ -1,17 +1,18 @@
 import os
 import sys
-import Client_launcher
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, font
-import threading
 from datetime import datetime, timedelta
 
+import Client_launcher
 import Utils.Reader as Reader
 import Utils.Gametime as Gametime
 import Utils.Console as Console
 import Utils.Help_window as Help_window
 import Utils.Settings_window as Settings_window
 import Utils.Terror_zone as Terror_zone
+import Utils.Battle_order as Battle_order
 import Overlays.Overlay_gametime as Overlay_gametime
 import Overlays.Overlay_pattern as Overlay_pattern
 
@@ -38,7 +39,7 @@ class Launcher:
     
     def initiate_app(self):
         """Initiates several parameters of the app"""
-        self._root.title("D2R-Py-Launcher 1.1.0")
+        self._root.title("D2R-Py-Launcher 1.1.1")
         self._root.resizable(0,0)
         self._root.configure(bg="black")
         self.displayed_path = tk.StringVar()
@@ -59,11 +60,10 @@ class Launcher:
         screen_height = self._root.winfo_screenheight()
         x_coordinate = (screen_width - self._root.winfo_reqwidth()) // 2
         y_coordinate = (screen_height - self._root.winfo_reqheight()) // 2
-        self._root.geometry(f"{self._root.winfo_reqwidth()+250}x{self._root.winfo_reqheight()+300}+{x_coordinate-200}+{y_coordinate-200}")
+        self._root.geometry(f"{self._root.winfo_reqwidth()+250}x{self._root.winfo_reqheight()+325}+{x_coordinate-200}+{y_coordinate-200}")
     
     def decorate_app(self):
         """Mostly creation and packing of buttons and menubar"""
-        self._root.grid_rowconfigure(3, minsize=20)
         small_font = font.Font(family="Helvetica", size=8)
 
         self._displayed_path_label = tk.Label(self._root, textvariable=self.displayed_path, bg="black", width=25)
@@ -78,11 +78,14 @@ class Launcher:
         self._info_field = tk.Label(self._root, text="Enter clients below", justify="center", bg="black", fg="white", width=25)
         self._info_field.grid(row=1, column=1, pady=5, padx=5, sticky="ew")
 
+        self._submit_clients = tk.Button(self._root, text="Launch D2R", command=lambda: threading.Thread(target=self.process_clients).start(), bg="grey", width=25)
+        self._submit_clients.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
+
         self._clients = tk.Entry(self._root, textvariable=self.client_amount, justify="center", width=10)
         self._clients.grid(row=2, column=1, pady=5, padx=5, sticky="ew")
 
-        self._submit_clients = tk.Button(self._root, text="Launch D2R", command=lambda: threading.Thread(target=self.process_clients).start(), bg="grey", width=25)
-        self._submit_clients.grid(row=2, column=0, pady=5, padx=5, sticky="ew")
+        self._console_button = tk.Button(self._root, text="Toggle console", command=self.toggle_console, bg="grey", width=25)
+        self._console_button.grid(row=4, column=0, pady=5, padx=5, sticky="ew")
 
         self._next_game = tk.Button(self._root, text="Join game", command=lambda: threading.Thread(target=self.join_game).start(), bg="grey", width=25)
         self._next_game.grid(row=4, column=1, pady=5, padx=5, sticky="ew")
@@ -93,20 +96,20 @@ class Launcher:
         self._resize_button = tk.Button(self._root, text="Re-size", command=lambda: threading.Thread(target=self.resize).start(), bg="grey", width=25)
         self._resize_button.grid(row=5, column=1, pady=5, padx=5, sticky="ew")
 
-        self._console_button = tk.Button(self._root, text="Toggle console", command=self.toggle_console, bg="grey", width=25)
-        self._console_button.grid(row=4, column=0, pady=5, padx=5, sticky="ew")
+        self._exit_button = tk.Button(self._root, text="Terminate PID", command=self.exit_diablo, bg="grey", width=25)
+        self._exit_button.grid(row=6, column=0, pady=5, padx=5, sticky="ew")
 
         self._memory_button = tk.Button(self._root, text="Reader", command=lambda: threading.Thread(target=self.read_stats).start(), bg="grey", width=25)
         self._memory_button.grid(row=6, column=1, pady=5, padx=5, sticky="ew")
 
-        self._reset_reader_button = tk.Button(self._root, text="Remove reader", command=self.remove_reader, bg="grey", width=25)
-        self._reset_reader_button.grid(row=7, column=1, pady=5, padx=5, sticky="ew")
-
         self._area_button = tk.Button(self._root, text="Scan area", command=lambda: threading.Thread(target=self.area_func).start(), bg="grey", width=25)
         self._area_button.grid(row=7, column=0, pady=5, padx=5, sticky="ew")
 
-        self._exit_button = tk.Button(self._root, text="Terminate PID", command=self.exit_diablo, bg="grey", width=25)
-        self._exit_button.grid(row=6, column=0, pady=5, padx=5, sticky="ew")
+        self._reset_reader_button = tk.Button(self._root, text="Remove reader", command=self.remove_reader, bg="grey", width=25)
+        self._reset_reader_button.grid(row=7, column=1, pady=5, padx=5, sticky="ew")
+
+        self._bo_button = tk.Button(self._root, text="BO", command=lambda: threading.Thread(target=self.go_bo).start(), bg="grey", width=25)
+        self._bo_button.grid(row=8, column=0, pady=5, padx=5, sticky="ew")
 
         self._terror_zone_field = tk.Label(self._root, text="Current TZ:", bg="black", fg="white", width=25)
         self._terror_zone_field.grid(row=9, column=0, pady=5, columnspan=3, sticky="ew")
@@ -122,7 +125,7 @@ class Launcher:
 
         self._count_down_tz = tk.Label(self._root, textvariable=self.count_down, bg="black", font=small_font, width=25)
         self._count_down_tz.grid(row=13, column=0, pady=5, columnspan=3, sticky="ew")
-
+        
         # menu bar stuff
         self._menubar = tk.Menu(self._root)
         self._root.config(menu=self._menubar)
@@ -360,6 +363,21 @@ class Launcher:
         """Start of countdown thread"""
         self.countdown_to_next()
         self._root.after(1000, self.update_countdown)
+
+    def go_bo(self):
+        """Initiates the Battle Order function"""
+        if self.client_check:
+            try:
+                legacy_setting = self._client_obj.get_legacy_status()
+                bo_obj = Battle_order.BattleOrder(self._console, self._client_obj, legacy_setting)
+                for name in self._client_obj.window_names:
+                    if "BO" in name:
+                        position = self._client_obj.get_window_position(name)
+                        bo_obj.bo_action(position, name)
+            except:
+                self._console.log_message(f"Error in go_bo", 3)
+        else:
+            self._console.log_message("You must launch the game first", 3)
 
 if __name__ == "__main__":
     """THE MAIN LOOP"""

@@ -4,10 +4,10 @@ import pytesseract
 import pyautogui
 import time
 import pygetwindow
-from fuzzywuzzy import fuzz
 import re
 import threading
 import os
+from fuzzywuzzy import fuzz
 
 import Data.GameAreas as GameAreas
 import Data.Pattern_info as pattern_info
