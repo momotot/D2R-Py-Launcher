@@ -43,6 +43,7 @@ class Launcher:
         self._root.title("D2R-Py-Launcher 1.1.1")
         self._root.resizable(0,0)
         self._root.configure(bg="black")
+        self._root.protocol("WM_DELETE_WINDOW", self.exit_app)
         self.displayed_path = tk.StringVar()
         self.displayed_path.set("Browse D2R")
         self.terror_zone_current = tk.StringVar()
@@ -207,7 +208,10 @@ class Launcher:
 
     def exit_app(self):
         """Exits the app"""
-        self._root.destroy()
+        user_response = messagebox.askquestion("Exit", "Are you sure you want to exit?")
+
+        if user_response == "yes":
+            self._root.destroy()
 
     def exit_diablo(self):
         """Function the runs when client object is created and the Terminate button is pressed"""
